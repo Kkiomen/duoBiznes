@@ -10,20 +10,42 @@ const tintColorDark = '#fff';
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    text: '#0F172A',
+    background: '#FFFFFF',
+    tint: '#22c55e',
+    icon: '#94A3B8',
+    tabIconDefault: '#94A3B8',
+    tabIconSelected: '#22c55e',
+    candy: {
+      blue: '#60a5fa',
+      green: '#34d399',
+      yellow: '#facc15',
+      pink: '#f472b6',
+      purple: '#a78bfa',
+      orange: '#fb923c',
+      bgSoft: '#F8FAFC',
+      card: '#FFFFFF',
+      shadow: 'rgba(0,0,0,0.08)'
+    }
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    text: '#F1F5F9',
+    background: '#0B1220',
+    tint: '#34d399',
+    icon: '#94A3B8',
+    tabIconDefault: '#94A3B8',
+    tabIconSelected: '#34d399',
+    candy: {
+      blue: '#3b82f6',
+      green: '#10b981',
+      yellow: '#eab308',
+      pink: '#ec4899',
+      purple: '#8b5cf6',
+      orange: '#f97316',
+      bgSoft: '#0F172A',
+      card: '#111827',
+      shadow: 'rgba(0,0,0,0.4)'
+    }
   },
 };
 
