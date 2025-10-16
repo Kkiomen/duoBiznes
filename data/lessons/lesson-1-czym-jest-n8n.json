@@ -1,0 +1,128 @@
+{
+  "moduleId": "n8n-lesson-1",
+  "moduleTitle": "Czym jest n8n?",
+  "character": "👩‍💼",
+  "characterName": "Ania",
+  "totalXP": 40,
+  "lessons": [
+    {
+      "id": 1,
+      "type": "story",
+      "content": {
+        "character": "👩‍💼",
+        "characterName": "Ania",
+        "story": "Poznaj Anię - właścicielkę małej firmy e-commerce. Każdego dnia spędza godziny na ręcznym kopiowaniu zamówień między systemami. To frustrujące i czasochłonne..."
+      }
+    },
+    {
+      "id": 2,
+      "type": "info",
+      "content": {
+        "icon": "🤖",
+        "heading": "n8n - automatyzacja dla wszystkich",
+        "text": "n8n to potężne narzędzie do automatyzacji przepływu pracy (workflow automation). Pozwala łączyć różne aplikacje i usługi bez pisania kodu!",
+        "bullets": [
+          "Wizualne budowanie workflow - jak klocki Lego",
+          "Ponad 300 gotowych integracji z popularnymi aplikacjami",
+          "No-code/low-code - dostępne dla każdego",
+          "Darmowa i open-source"
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "type": "multiple-choice",
+      "xp": 10,
+      "content": {
+        "question": "n8n służy przede wszystkim do:",
+        "options": [
+          { "text": "Automatyzacji workflow", "icon": "🔄" },
+          { "text": "Edycji zdjęć", "icon": "🖼️" },
+          { "text": "Grania w gry", "icon": "🎮" },
+          { "text": "Pisania dokumentów", "icon": "📄" }
+        ],
+        "correctAnswer": 0
+      }
+    },
+    {
+      "id": 4,
+      "type": "info",
+      "content": {
+        "icon": "💡",
+        "heading": "Co możesz zautomatyzować?",
+        "text": "n8n może zautomatyzować praktycznie każdy powtarzalny proces w Twojej firmie:",
+        "bullets": [
+          "Obsługa zamówień e-commerce",
+          "Generowanie i wysyłka faktur",
+          "Synchronizacja danych między systemami",
+          "Powiadomienia dla zespołu",
+          "Zbieranie i analiza danych"
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "type": "true-false",
+      "xp": 10,
+      "content": {
+        "statement": "n8n wymaga zaawansowanej znajomości programowania",
+        "correctAnswer": false
+      }
+    },
+    {
+      "id": 6,
+      "type": "example",
+      "content": {
+        "title": "Przykład: Automatyzacja w e-commerce",
+        "steps": [
+          { "icon": "🛒", "text": "Klient składa zamówienie w sklepie online" },
+          { "icon": "🤖", "text": "n8n automatycznie otrzymuje informacje" },
+          { "icon": "📧", "text": "Wysyła potwierdzenie email do klienta" },
+          { "icon": "📊", "text": "Dodaje dane do arkusza Google Sheets" },
+          { "icon": "💬", "text": "Powiadamia zespół na Slacku" }
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "type": "multiple-choice",
+      "xp": 10,
+      "content": {
+        "question": "Która z poniższych funkcji NIE jest cechą n8n?",
+        "options": [
+          { "text": "Wizualne budowanie workflow", "icon": "👁️" },
+          { "text": "Integracje z 300+ aplikacjami", "icon": "🔗" },
+          { "text": "Edycja filmów wideo", "icon": "🎬" },
+          { "text": "Automatyzacja zadań", "icon": "⚡" }
+        ],
+        "correctAnswer": 2
+      }
+    },
+    {
+      "id": 8,
+      "type": "tip",
+      "content": {
+        "tip": "n8n jest w 100% darmowe i open-source! Możesz hostować je na własnym serwerze i mieć pełną kontrolę nad swoimi danymi i workflow."
+      }
+    },
+    {
+      "id": 9,
+      "type": "swipe-cards",
+      "xp": 10,
+      "content": {
+        "statement": "n8n może połączyć Google Sheets z Slackiem",
+        "correctAnswer": true
+      }
+    },
+    {
+      "id": 10,
+      "type": "story",
+      "content": {
+        "character": "👩‍💼",
+        "characterName": "Ania",
+        "story": "Ania jest podekscytowana! Dzięki n8n może zaoszczędzić nawet 15 godzin tygodniowo na ręcznej pracy. Czas zacząć naukę budowania pierwszego workflow! 🚀"
+      }
+    }
+  ]
+}
+

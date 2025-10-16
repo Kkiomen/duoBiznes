@@ -1,0 +1,126 @@
+{
+  "moduleId": "n8n-lesson-2",
+  "moduleTitle": "Podstawy Workflow",
+  "character": "👩‍💼",
+  "characterName": "Ania",
+  "totalXP": 45,
+  "lessons": [
+    {
+      "id": 1,
+      "type": "info",
+      "content": {
+        "icon": "⚙️",
+        "heading": "Czym jest Workflow?",
+        "text": "Workflow to seria automatycznych kroków, które wykonują określone zadanie. Możesz myśleć o nim jak o przepisie kulinarnym - każdy krok prowadzi do następnego.",
+        "bullets": [
+          "Workflow składa się z połączonych node'ów (węzłów)",
+          "Każdy node wykonuje jedną konkretną funkcję",
+          "Node'y przekazują dane do kolejnych node'ów",
+          "Workflow może działać całkowicie automatycznie"
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "type": "diagram",
+      "content": {
+        "title": "Prosty workflow - 3 kroki",
+        "nodes": [
+          { "icon": "🪝", "label": "Webhook" },
+          { "icon": "⚙️", "label": "Set" },
+          { "icon": "📧", "label": "Email" }
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "type": "multiple-choice",
+      "xp": 10,
+      "content": {
+        "question": "Z czego składa się workflow w n8n?",
+        "options": [
+          { "text": "Z połączonych node'ów", "icon": "🔗" },
+          { "text": "Z plików PDF", "icon": "📄" },
+          { "text": "Z obrazków", "icon": "🖼️" },
+          { "text": "Z prezentacji", "icon": "📊" }
+        ],
+        "correctAnswer": 0
+      }
+    },
+    {
+      "id": 4,
+      "type": "info",
+      "content": {
+        "icon": "🎯",
+        "heading": "Elementy workflow",
+        "text": "Każdy workflow ma kluczowe elementy, które współpracują ze sobą:",
+        "bullets": [
+          "Trigger - punkt startowy workflow (np. webhook)",
+          "Actions - akcje do wykonania (np. wysłanie email)",
+          "Conditions - warunki logiczne (np. IF)",
+          "Data - informacje przepływające między node'ami"
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "type": "true-false",
+      "xp": 10,
+      "content": {
+        "statement": "Workflow zawsze rozpoczyna się od triggera",
+        "correctAnswer": true
+      }
+    },
+    {
+      "id": 6,
+      "type": "example",
+      "content": {
+        "title": "Przykład workflow: Powiadomienia o zamówieniu",
+        "steps": [
+          { "icon": "🪝", "text": "Trigger: Otrzymanie nowego zamówienia" },
+          { "icon": "❓", "text": "Warunek: Czy wartość > 500 zł?" },
+          { "icon": "📧", "text": "Akcja: Wyślij email do klienta" },
+          { "icon": "💬", "text": "Akcja: Powiadom zespół na Slacku" }
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "type": "match-pairs",
+      "xp": 15,
+      "content": {
+        "pairs": [
+          { "left": "Trigger", "leftIcon": "🪝", "right": "Uruchamia workflow" },
+          { "left": "Action", "leftIcon": "⚡", "right": "Wykonuje zadanie" },
+          { "left": "Condition", "leftIcon": "❓", "right": "Sprawdza warunki" }
+        ]
+      }
+    },
+    {
+      "id": 8,
+      "type": "tip",
+      "content": {
+        "tip": "Workflow może być prosty (2-3 node'y) lub bardzo złożony (kilkadziesiąt node'ów). Zawsze zaczynaj od prostych workflow i stopniowo je rozbudowuj!"
+      }
+    },
+    {
+      "id": 9,
+      "type": "swipe-cards",
+      "xp": 10,
+      "content": {
+        "statement": "Jeden workflow może mieć tylko jeden node",
+        "correctAnswer": false
+      }
+    },
+    {
+      "id": 10,
+      "type": "story",
+      "content": {
+        "character": "👩‍💼",
+        "characterName": "Ania",
+        "story": "Teraz Ania rozumie podstawy! Workflow to jak domino - jeden krok uruchamia następny. Czas poznać różne typy node'ów, które może użyć! 🎲"
+      }
+    }
+  ]
+}
+

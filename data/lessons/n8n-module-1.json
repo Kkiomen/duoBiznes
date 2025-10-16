@@ -1,0 +1,463 @@
+{
+  "moduleId": "n8n-basics",
+  "moduleTitle": "Podstawy n8n",
+  "character": "👩‍💼",
+  "characterName": "Ania",
+  "totalXP": 380,
+  "lessons": [
+    {
+      "id": 1,
+      "type": "story",
+      "content": {
+        "character": "👩‍💼",
+        "characterName": "Ania",
+        "story": "Poznaj Anię - właścicielkę małej firmy e-commerce. Każdego dnia otrzymuje dziesiątki zamówień, ale ręczne kopiowanie danych między systemami zajmuje jej godziny. Musi być lepszy sposób..."
+      }
+    },
+    {
+      "id": 2,
+      "type": "info",
+      "content": {
+        "icon": "🤖",
+        "heading": "n8n - automatyzacja dla wszystkich",
+        "text": "n8n to narzędzie do automatyzacji przepływu pracy (workflow automation). Pozwala łączyć różne aplikacje i usługi bez pisania kodu!",
+        "bullets": [
+          "Wizualne budowanie workflow",
+          "300+ gotowych integracji",
+          "No-code/low-code dla wszystkich"
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "type": "multiple-choice",
+      "xp": 10,
+      "content": {
+        "question": "n8n służy przede wszystkim do:",
+        "options": [
+          { "text": "Automatyzacji workflow", "icon": "🔄" },
+          { "text": "Edycji zdjęć", "icon": "🖼️" },
+          { "text": "Grania w gry", "icon": "🎮" },
+          { "text": "Pisania emaili", "icon": "✉️" }
+        ],
+        "correctAnswer": 0
+      }
+    },
+    {
+      "id": 4,
+      "type": "info",
+      "content": {
+        "icon": "⚙️",
+        "heading": "Czym jest Workflow?",
+        "text": "Workflow to seria automatycznych kroków, które wykonują określone zadanie. W n8n workflow składa się z połączonych ze sobą node'ów (węzłów).",
+        "bullets": [
+          "Każdy node wykonuje jedną funkcję",
+          "Node'y przekazują dane do następnych",
+          "Workflow może działać automatycznie"
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "type": "true-false",
+      "xp": 10,
+      "content": {
+        "statement": "Workflow to seria automatycznych kroków połączonych ze sobą",
+        "correctAnswer": true
+      }
+    },
+    {
+      "id": 6,
+      "type": "story",
+      "content": {
+        "character": "👩‍💼",
+        "characterName": "Ania",
+        "story": "Ania dowiedziała się o n8n i postanowiła zautomatyzować proces obsługi zamówień. Najpierw musi poznać podstawowe node'y..."
+      }
+    },
+    {
+      "id": 7,
+      "type": "info",
+      "content": {
+        "icon": "🔗",
+        "heading": "Podstawowe typy node'ów",
+        "text": "W n8n istnieje kilka kluczowych typów node'ów, które będziesz używać najczęściej:",
+        "bullets": [
+          "HTTP Request - pobiera dane z API",
+          "Webhook - odbiera dane z zewnątrz",
+          "Set - manipuluje i transformuje dane",
+          "IF - sprawdza warunki logiczne",
+          "Email - wysyła wiadomości email"
+        ]
+      }
+    },
+    {
+      "id": 8,
+      "type": "diagram",
+      "content": {
+        "title": "Przykładowy prosty workflow",
+        "nodes": [
+          { "icon": "🪝", "label": "Webhook" },
+          { "icon": "⚙️", "label": "Set" },
+          { "icon": "📧", "label": "Email" }
+        ]
+      }
+    },
+    {
+      "id": 9,
+      "type": "match-pairs",
+      "xp": 15,
+      "content": {
+        "pairs": [
+          { "left": "HTTP Request", "leftIcon": "🌐", "right": "Pobiera dane z API" },
+          { "left": "Webhook", "leftIcon": "🪝", "right": "Odbiera dane z zewnątrz" },
+          { "left": "Set", "leftIcon": "⚙️", "right": "Transformuje dane" }
+        ]
+      }
+    },
+    {
+      "id": 10,
+      "type": "node-picker",
+      "xp": 10,
+      "content": {
+        "task": "Potrzebujesz pobrać listę produktów z API Shopify. Który node wybierzesz?",
+        "options": [
+          { "name": "HTTP Request", "icon": "🌐" },
+          { "name": "Webhook", "icon": "🪝" },
+          { "name": "Email", "icon": "📧" },
+          { "name": "Set", "icon": "⚙️" }
+        ],
+        "correctAnswer": 0
+      }
+    },
+    {
+      "id": 11,
+      "type": "tip",
+      "content": {
+        "tip": "Zawsze nazywaj swoje node'y! Zamiast 'HTTP Request 1' użyj 'Pobierz dane klienta'. Ułatwi to debugowanie i współpracę z zespołem."
+      }
+    },
+    {
+      "id": 12,
+      "type": "multiple-choice",
+      "xp": 10,
+      "content": {
+        "question": "Który node służy do automatycznego uruchamiania workflow?",
+        "options": [
+          { "text": "Webhook", "icon": "🪝" },
+          { "text": "Set", "icon": "⚙️" },
+          { "text": "Email", "icon": "📧" },
+          { "text": "HTTP Request", "icon": "🌐" }
+        ],
+        "correctAnswer": 0
+      }
+    },
+    {
+      "id": 13,
+      "type": "fill-blank",
+      "xp": 10,
+      "content": {
+        "sentence": "Webhook zwraca otrzymane dane w formacie ___",
+        "placeholder": "Wpisz format...",
+        "correctAnswer": "JSON"
+      }
+    },
+    {
+      "id": 14,
+      "type": "true-false",
+      "xp": 10,
+      "content": {
+        "statement": "Node Set może bezpośrednio zapisywać dane do bazy danych",
+        "correctAnswer": false
+      }
+    },
+    {
+      "id": 15,
+      "type": "challenge-intro",
+      "content": {
+        "title": "Wyzwanie: Zbuduj workflow!",
+        "description": "Twoim zadaniem będzie ułożenie kroków workflow w prawidłowej kolejności. Pamiętaj: każdy workflow zaczyna się od triggera!",
+        "emoji": "🎯"
+      }
+    },
+    {
+      "id": 16,
+      "type": "example",
+      "content": {
+        "title": "Przykład: Automatyczne powiadomienia",
+        "steps": [
+          { "icon": "🪝", "text": "Webhook otrzymuje nowe zamówienie" },
+          { "icon": "❓", "text": "IF sprawdza czy wartość > 1000 zł" },
+          { "icon": "⚙️", "text": "Set przygotowuje dane do wysłania" },
+          { "icon": "💬", "text": "Slack wysyła powiadomienie do zespołu VIP" }
+        ]
+      }
+    },
+    {
+      "id": 17,
+      "type": "diagram",
+      "content": {
+        "title": "Workflow z warunkiem",
+        "nodes": [
+          { "icon": "🪝", "label": "Webhook" },
+          { "icon": "❓", "label": "IF" },
+          { "icon": "⚙️", "label": "Set" },
+          { "icon": "📧", "label": "Email" }
+        ]
+      }
+    },
+    {
+      "id": 18,
+      "type": "drag-sequence",
+      "xp": 20,
+      "content": {
+        "items": [
+          { "text": "Webhook", "icon": "🪝" },
+          { "text": "IF", "icon": "❓" },
+          { "text": "Set", "icon": "⚙️" },
+          { "text": "Email", "icon": "📧" }
+        ],
+        "initialOrder": [2, 0, 3, 1],
+        "correctOrder": [0, 1, 2, 3]
+      }
+    },
+    {
+      "id": 19,
+      "type": "multiple-choice",
+      "xp": 15,
+      "content": {
+        "question": "Co się stanie gdy warunek IF zwróci FALSE?",
+        "options": [
+          { "text": "Workflow się zatrzyma", "icon": "⏸️" },
+          { "text": "Przejdzie do gałęzi FALSE", "icon": "↩️" },
+          { "text": "Uruchomi się od początku", "icon": "🔄" },
+          { "text": "Wyśle błąd", "icon": "❌" }
+        ],
+        "correctAnswer": 1
+      }
+    },
+    {
+      "id": 20,
+      "type": "node-picker",
+      "xp": 10,
+      "content": {
+        "task": "Chcesz wysłać powiadomienie na Slacka. Który node wybierzesz?",
+        "options": [
+          { "name": "Slack", "icon": "💬" },
+          { "name": "Email", "icon": "📧" },
+          { "name": "Webhook", "icon": "🪝" },
+          { "name": "HTTP Request", "icon": "🌐" }
+        ],
+        "correctAnswer": 0
+      }
+    },
+    {
+      "id": 21,
+      "type": "swipe-cards",
+      "xp": 10,
+      "content": {
+        "statement": "Każdy workflow musi zaczynać się od Webhook",
+        "correctAnswer": false
+      }
+    },
+    {
+      "id": 22,
+      "type": "story",
+      "content": {
+        "character": "👩‍💼",
+        "characterName": "Ania",
+        "story": "Ania nauczyła się podstaw! Teraz czas poznać jak pracować z danymi w n8n. Każdy node przekazuje dane w formacie JSON..."
+      }
+    },
+    {
+      "id": 23,
+      "type": "info",
+      "content": {
+        "icon": "📊",
+        "heading": "Dane w n8n: {{ $json }}",
+        "text": "n8n używa specjalnej składni do dostępu do danych. Wszystkie dane z poprzedniego node'a są dostępne przez {{ $json }}",
+        "bullets": [
+          "{{ $json.email }} - pobiera pole 'email'",
+          "{{ $json.items[0] }} - pierwszy element tablicy",
+          "{{ $json.user.name }} - zagnieżdżone pola"
+        ]
+      }
+    },
+    {
+      "id": 24,
+      "type": "example",
+      "content": {
+        "title": "Przykłady wyrażeń n8n",
+        "steps": [
+          { "icon": "📧", "text": "{{ $json.email }} → jan@example.com" },
+          { "icon": "👤", "text": "{{ $json.user.name }} → Jan Kowalski" },
+          { "icon": "🔢", "text": "{{ $json.amount }} → 1500" }
+        ]
+      }
+    },
+    {
+      "id": 25,
+      "type": "fill-blank",
+      "xp": 15,
+      "content": {
+        "sentence": "Aby odczytać pole 'name' z JSON używam: {{ $json.___ }}",
+        "placeholder": "Wpisz nazwę pola...",
+        "correctAnswer": "name"
+      }
+    },
+    {
+      "id": 26,
+      "type": "multiple-choice",
+      "xp": 15,
+      "content": {
+        "question": "Co zwróci wyrażenie {{ $json.items[0] }}?",
+        "options": [
+          { "text": "Pierwszy element tablicy", "icon": "1️⃣" },
+          { "text": "Ostatni element tablicy", "icon": "🔚" },
+          { "text": "Całą tablicę", "icon": "📋" },
+          { "text": "Liczbę elementów", "icon": "🔢" }
+        ],
+        "correctAnswer": 0
+      }
+    },
+    {
+      "id": 27,
+      "type": "info",
+      "content": {
+        "icon": "💡",
+        "heading": "Najczęściej używane wyrażenia",
+        "text": "Oto wyrażenia, których będziesz używać najczęściej:",
+        "bullets": [
+          "{{ $json }} - wszystkie dane z poprzedniego node'a",
+          "{{ $json.fieldName }} - konkretne pole",
+          "{{ $now }} - aktualna data i czas",
+          "{{ $node['NodeName'].json }} - dane z konkretnego node'a"
+        ]
+      }
+    },
+    {
+      "id": 28,
+      "type": "fill-blank",
+      "xp": 15,
+      "content": {
+        "sentence": "Aby dostać aktualny czas używam wyrażenia: {{ $___ }}",
+        "placeholder": "Wpisz odpowiedź...",
+        "correctAnswer": "now"
+      }
+    },
+    {
+      "id": 29,
+      "type": "tip",
+      "content": {
+        "tip": "Używaj Preview w n8n! Kliknij 'Execute Node' aby zobaczyć jakie dane zwraca każdy node. To najlepszy sposób na debugowanie workflow."
+      }
+    },
+    {
+      "id": 30,
+      "type": "challenge-intro",
+      "content": {
+        "title": "Finałowe wyzwanie!",
+        "description": "Czas połączyć całą wiedzę! Zbudujesz kompletny workflow e-commerce od początku do końca.",
+        "emoji": "🏆"
+      }
+    },
+    {
+      "id": 31,
+      "type": "example",
+      "content": {
+        "title": "Kompletny workflow e-commerce",
+        "steps": [
+          { "icon": "🪝", "text": "Webhook odbiera nowe zamówienie z Shopify" },
+          { "icon": "⚙️", "text": "Set wyciąga email i kwotę zamówienia" },
+          { "icon": "❓", "text": "IF sprawdza czy kwota > 500 zł" },
+          { "icon": "📧", "text": "Email wysyła potwierdzenie do klienta" },
+          { "icon": "💬", "text": "Slack powiadamia zespół o dużym zamówieniu" }
+        ]
+      }
+    },
+    {
+      "id": 32,
+      "type": "diagram",
+      "content": {
+        "title": "Wizualizacja pełnego workflow",
+        "nodes": [
+          { "icon": "🪝", "label": "Webhook" },
+          { "icon": "⚙️", "label": "Set" },
+          { "icon": "❓", "label": "IF" },
+          { "icon": "📧", "label": "Email" },
+          { "icon": "💬", "label": "Slack" }
+        ]
+      }
+    },
+    {
+      "id": 33,
+      "type": "drag-sequence",
+      "xp": 25,
+      "content": {
+        "items": [
+          { "text": "Webhook", "icon": "🪝" },
+          { "text": "Set", "icon": "⚙️" },
+          { "text": "IF", "icon": "❓" },
+          { "text": "Email", "icon": "📧" },
+          { "text": "Slack", "icon": "💬" }
+        ],
+        "initialOrder": [2, 4, 0, 1, 3],
+        "correctOrder": [0, 1, 2, 3, 4]
+      }
+    },
+    {
+      "id": 34,
+      "type": "node-picker",
+      "xp": 15,
+      "content": {
+        "task": "Musisz przekształcić dane przed wysłaniem ich dalej. Który node użyjesz?",
+        "options": [
+          { "name": "Set", "icon": "⚙️" },
+          { "name": "IF", "icon": "❓" },
+          { "name": "Webhook", "icon": "🪝" },
+          { "name": "Email", "icon": "📧" }
+        ],
+        "correctAnswer": 0
+      }
+    },
+    {
+      "id": 35,
+      "type": "match-pairs",
+      "xp": 20,
+      "content": {
+        "pairs": [
+          { "left": "{{ $json.email }}", "right": "Pobiera pole email" },
+          { "left": "{{ $now }}", "right": "Zwraca aktualny czas" },
+          { "left": "{{ $json.items[0] }}", "right": "Pierwszy element tablicy" }
+        ]
+      }
+    },
+    {
+      "id": 36,
+      "type": "swipe-cards",
+      "xp": 10,
+      "content": {
+        "statement": "Node IF może mieć tylko dwie gałęzie: TRUE i FALSE",
+        "correctAnswer": true
+      }
+    },
+    {
+      "id": 37,
+      "type": "swipe-cards",
+      "xp": 10,
+      "content": {
+        "statement": "Wyrażenie {{ $json }} zwraca wszystkie dane z poprzedniego node'a",
+        "correctAnswer": true
+      }
+    },
+    {
+      "id": 38,
+      "type": "story",
+      "content": {
+        "character": "👩‍💼",
+        "characterName": "Ania",
+        "story": "Gratulacje! Ania właśnie stworzyła swój pierwszy automatyczny workflow. Teraz zamiast 3 godzin dziennie, cały proces zajmuje 3 minuty! Zaoszczędziła 10 godzin tygodniowo, które może przeznaczyć na rozwój biznesu. 🎉"
+      }
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "moduleId": "n8n-lesson-5",
+  "moduleTitle": "Praca z danymi",
+  "character": "👩‍💼",
+  "characterName": "Ania",
+  "totalXP": 60,
+  "lessons": [
+    {
+      "id": 1,
+      "type": "story",
+      "content": {
+        "character": "👩‍💼",
+        "characterName": "Ania",
+        "story": "Ania wie już jak budować workflow, ale jak dostać się do konkretnych danych? Czas nauczyć się wyrażeń n8n! 📊"
+      }
+    },
+    {
+      "id": 2,
+      "type": "info",
+      "content": {
+        "icon": "📊",
+        "heading": "Dane w n8n: {{ $json }}",
+        "text": "n8n używa specjalnej składni do dostępu do danych. Wszystkie dane z poprzedniego node'a są dostępne przez {{ $json }}",
+        "bullets": [
+          "{{ $json }} - wszystkie dane z poprzedniego node'a",
+          "{{ $json.email }} - pobiera pole 'email'",
+          "{{ $json.items[0] }} - pierwszy element tablicy",
+          "{{ $json.user.name }} - zagnieżdżone pola"
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "type": "example",
+      "content": {
+        "title": "Przykłady wyrażeń n8n",
+        "steps": [
+          { "icon": "📧", "text": "{{ $json.email }} → jan@example.com" },
+          { "icon": "👤", "text": "{{ $json.user.name }} → Jan Kowalski" },
+          { "icon": "🔢", "text": "{{ $json.amount }} → 1500" },
+          { "icon": "📅", "text": "{{ $json.items[0] }} → pierwszy element" }
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "type": "fill-blank",
+      "xp": 15,
+      "content": {
+        "sentence": "Aby odczytać pole 'name' z JSON używam: {{ $json.___ }}",
+        "placeholder": "Wpisz nazwę pola...",
+        "correctAnswer": "name"
+      }
+    },
+    {
+      "id": 5,
+      "type": "multiple-choice",
+      "xp": 15,
+      "content": {
+        "question": "Co zwróci wyrażenie {{ $json.items[0] }}?",
+        "options": [
+          { "text": "Pierwszy element tablicy", "icon": "1️⃣" },
+          { "text": "Ostatni element tablicy", "icon": "🔚" },
+          { "text": "Całą tablicę", "icon": "📋" },
+          { "text": "Liczbę elementów", "icon": "🔢" }
+        ],
+        "correctAnswer": 0
+      }
+    },
+    {
+      "id": 6,
+      "type": "info",
+      "content": {
+        "icon": "💡",
+        "heading": "Przydatne wyrażenia",
+        "text": "Oto wyrażenia, których będziesz używać najczęściej w pracy z n8n:",
+        "bullets": [
+          "{{ $now }} - aktualna data i czas",
+          "{{ $node['NodeName'].json }} - dane z konkretnego node'a",
+          "{{ $json.field || 'domyślna wartość' }} - wartość domyślna",
+          "{{ $json.price * 1.23 }} - obliczenia matematyczne"
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "type": "fill-blank",
+      "xp": 15,
+      "content": {
+        "sentence": "Aby pobrać aktualną datę używam wyrażenia: {{ $___ }}",
+        "placeholder": "Wpisz odpowiedź...",
+        "correctAnswer": "now"
+      }
+    },
+    {
+      "id": 8,
+      "type": "diagram",
+      "content": {
+        "title": "Przepływ danych między node'ami",
+        "nodes": [
+          { "icon": "🪝", "label": "Webhook\n{name, email}" },
+          { "icon": "⚙️", "label": "Set\n{{ $json.email }}" },
+          { "icon": "📧", "label": "Email\ndo: {{ $json.email }}" }
+        ]
+      }
+    },
+    {
+      "id": 9,
+      "type": "tip",
+      "content": {
+        "tip": "Używaj przycisku 'Execute Node' w n8n aby zobaczyć dokładnie jakie dane zwraca każdy node. To najlepszy sposób na debugowanie wyrażeń!"
+      }
+    },
+    {
+      "id": 10,
+      "type": "match-pairs",
+      "xp": 15,
+      "content": {
+        "pairs": [
+          { "left": "{{ $json.email }}", "right": "Pobiera pole email" },
+          { "left": "{{ $now }}", "right": "Zwraca aktualny czas" },
+          { "left": "{{ $json.items[0] }}", "right": "Pierwszy element tablicy" }
+        ]
+      }
+    }
+  ]
+}
+

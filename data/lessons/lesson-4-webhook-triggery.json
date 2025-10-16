@@ -1,0 +1,127 @@
+{
+  "moduleId": "n8n-lesson-4",
+  "moduleTitle": "Webhook i Triggery",
+  "character": "👩‍💼",
+  "characterName": "Ania",
+  "totalXP": 50,
+  "lessons": [
+    {
+      "id": 1,
+      "type": "story",
+      "content": {
+        "character": "👩‍💼",
+        "characterName": "Ania",
+        "story": "Ania zastanawia się: 'Jak workflow wie, kiedy ma się uruchomić?' To proste - używa triggerów! Webhook to najpopularniejszy trigger w n8n."
+      }
+    },
+    {
+      "id": 2,
+      "type": "info",
+      "content": {
+        "icon": "🪝",
+        "heading": "Co to jest Webhook?",
+        "text": "Webhook to specjalny adres URL, który nasłuchuje na przychodzące dane. Kiedy webhook otrzyma dane, automatycznie uruchamia workflow.",
+        "bullets": [
+          "Webhook = adres URL do odbierania danych",
+          "Działa w czasie rzeczywistym (instant)",
+          "Otrzymuje dane w formacie JSON",
+          "Automatycznie uruchamia workflow"
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "type": "multiple-choice",
+      "xp": 10,
+      "content": {
+        "question": "Co robi webhook w n8n?",
+        "options": [
+          { "text": "Odbiera dane i uruchamia workflow", "icon": "🪝" },
+          { "text": "Wysyła emaile", "icon": "📧" },
+          { "text": "Edytuje zdjęcia", "icon": "🖼️" },
+          { "text": "Tworzy dokumenty", "icon": "📄" }
+        ],
+        "correctAnswer": 0
+      }
+    },
+    {
+      "id": 4,
+      "type": "example",
+      "content": {
+        "title": "Przykład: Jak działa webhook",
+        "steps": [
+          { "icon": "🛒", "text": "Klient składa zamówienie w Shopify" },
+          { "icon": "📡", "text": "Shopify wysyła dane na adres webhook" },
+          { "icon": "🪝", "text": "Webhook n8n otrzymuje dane" },
+          { "icon": "⚡", "text": "Workflow automatycznie się uruchamia!" }
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "type": "fill-blank",
+      "xp": 10,
+      "content": {
+        "sentence": "Webhook zwraca otrzymane dane w formacie ___",
+        "placeholder": "Wpisz format...",
+        "correctAnswer": "JSON"
+      }
+    },
+    {
+      "id": 6,
+      "type": "info",
+      "content": {
+        "icon": "⏰",
+        "heading": "Inne typy triggerów",
+        "text": "Oprócz webhook'ów, n8n oferuje wiele innych sposobów na uruchamianie workflow:",
+        "bullets": [
+          "Schedule - uruchamia workflow o określonej godzinie",
+          "Manual Trigger - uruchamiasz ręcznie przyciskiem",
+          "Email Trigger - reaguje na przychodzące emaile",
+          "Cron - zaawansowane harmonogramy czasowe"
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "type": "true-false",
+      "xp": 10,
+      "content": {
+        "statement": "Webhook może uruchomić workflow automatycznie bez interwencji użytkownika",
+        "correctAnswer": true
+      }
+    },
+    {
+      "id": 8,
+      "type": "multiple-choice",
+      "xp": 10,
+      "content": {
+        "question": "Który trigger użyjesz, aby workflow uruchamiał się codziennie o 9:00?",
+        "options": [
+          { "text": "Schedule", "icon": "⏰" },
+          { "text": "Webhook", "icon": "🪝" },
+          { "text": "HTTP Request", "icon": "🌐" },
+          { "text": "Email", "icon": "📧" }
+        ],
+        "correctAnswer": 0
+      }
+    },
+    {
+      "id": 9,
+      "type": "tip",
+      "content": {
+        "tip": "Webhook to najszybszy sposób na reakcję w czasie rzeczywistym! Idealny do integracji z aplikacjami jak Shopify, Stripe, czy formularze na stronie."
+      }
+    },
+    {
+      "id": 10,
+      "type": "swipe-cards",
+      "xp": 10,
+      "content": {
+        "statement": "Każdy workflow musi mieć przynajmniej jeden trigger",
+        "correctAnswer": true
+      }
+    }
+  ]
+}
+
