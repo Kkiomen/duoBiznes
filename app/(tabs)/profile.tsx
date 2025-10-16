@@ -1,27 +1,38 @@
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
 import { ProgressBar } from '@/components/ui/progress-bar';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 export default function ProfileScreen() {
   const colorScheme = useColorScheme() ?? 'light';
-  
+
   return (
-    <ScrollView style={{ backgroundColor: colorScheme === 'dark' ? '#0B1220' : '#fff' }}>
-      <ThemedView style={styles.container}>
+    <ScrollView
+      style={{ backgroundColor: colorScheme === 'dark' ? 'rgb(19, 29, 45)' : '#F8FAFC' }}
+      contentContainerStyle={{ paddingBottom: 100 }}
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={styles.container}>
         {/* Header z avatarem */}
-        <View style={styles.header}>
-          <LinearGradient
-            colors={['#58cc02', '#46a302']}
-            style={styles.avatar}
-          >
-            <ThemedText style={styles.avatarText}>AI</ThemedText>
-          </LinearGradient>
-          <ThemedText style={styles.username}>Uczący się AI</ThemedText>
-          <ThemedText style={styles.joinDate}>Dołączył w październiku 2025</ThemedText>
-        </View>
+        <LinearGradient
+          colors={colorScheme === 'dark'
+            ? ['rgba(26,31,53,0.6)', 'rgba(15,23,42,0.4)']
+            : ['rgba(255,255,255,0.9)', 'rgba(248,250,252,0.7)']
+          }
+          style={styles.headerCard}
+        >
+          <View style={styles.header}>
+            <LinearGradient
+              colors={['#58cc02', '#46a302']}
+              style={styles.avatar}
+            >
+              <ThemedText style={styles.avatarText}>🤖</ThemedText>
+            </LinearGradient>
+            <ThemedText style={styles.username}>Uczący się AI</ThemedText>
+            <ThemedText style={styles.joinDate}>Dołączył w październiku 2025</ThemedText>
+          </View>
+        </LinearGradient>
 
         {/* Statystyki */}
         <View style={styles.statsGrid}>
@@ -98,85 +109,122 @@ export default function ProfileScreen() {
             color="#1cb0f6"
           />
         </View>
-      </ThemedView>
+      </View>
     </ScrollView>
   );
 }
 
-function StatCard({ 
-  icon, 
-  value, 
-  label, 
-  color 
-}: { 
-  icon: string; 
-  value: string; 
-  label: string; 
+function StatCard({
+  icon,
+  value,
+  label,
+  color
+}: {
+  icon: string;
+  value: string;
+  label: string;
   color: string;
 }) {
+  const colorScheme = useColorScheme() ?? 'light';
+
   return (
-    <View style={styles.statCard}>
-      <ThemedText style={styles.statIcon}>{icon}</ThemedText>
-      <ThemedText style={[styles.statValue, { color }]}>{value}</ThemedText>
-      <ThemedText style={styles.statLabel}>{label}</ThemedText>
-    </View>
+    <Pressable style={({ pressed }) => [styles.statCard, pressed && { opacity: 0.8 }]}>
+      <LinearGradient
+        colors={colorScheme === 'dark'
+          ? ['rgba(39, 49, 66, 0.8)', 'rgba(26, 31, 53, 0.6)']
+          : ['rgba(255,255,255,0.95)', 'rgba(248,250,252,0.8)']
+        }
+        style={styles.statCardGradient}
+      >
+        <ThemedText style={styles.statIcon}>{icon}</ThemedText>
+        <ThemedText style={[styles.statValue, { color }]}>{value}</ThemedText>
+        <ThemedText style={styles.statLabel}>{label}</ThemedText>
+      </LinearGradient>
+    </Pressable>
   );
 }
 
-function AchievementBadge({ 
-  icon, 
-  title, 
-  description, 
-  unlocked 
-}: { 
-  icon: string; 
-  title: string; 
-  description: string; 
+function AchievementBadge({
+  icon,
+  title,
+  description,
+  unlocked
+}: {
+  icon: string;
+  title: string;
+  description: string;
   unlocked: boolean;
 }) {
+  const colorScheme = useColorScheme() ?? 'light';
+
   return (
-    <View style={[styles.achievement, !unlocked && styles.achievementLocked]}>
-      <View style={[styles.achievementIcon, !unlocked && styles.achievementIconLocked]}>
-        <ThemedText style={styles.achievementEmoji}>{icon}</ThemedText>
-      </View>
-      <View style={styles.achievementText}>
-        <ThemedText style={[styles.achievementTitle, !unlocked && styles.textLocked]}>
-          {title}
-        </ThemedText>
-        <ThemedText style={[styles.achievementDesc, !unlocked && styles.textLocked]}>
-          {description}
-        </ThemedText>
-      </View>
-      {unlocked && (
-        <View style={styles.checkBadge}>
-          <ThemedText style={styles.checkText}>✓</ThemedText>
+    <Pressable style={({ pressed }) => [pressed && { opacity: 0.8 }]}>
+      <LinearGradient
+        colors={colorScheme === 'dark'
+          ? unlocked
+            ? ['rgba(39, 49, 66, 0.9)', 'rgba(26, 31, 53, 0.7)']
+            : ['rgba(39, 49, 66, 0.4)', 'rgba(26, 31, 53, 0.3)']
+          : unlocked
+            ? ['rgba(255,255,255,0.95)', 'rgba(248,250,252,0.8)']
+            : ['rgba(230,230,230,0.5)', 'rgba(200,200,200,0.3)']
+        }
+        style={styles.achievement}
+      >
+        <LinearGradient
+          colors={unlocked ? ['#FFD700', '#FFA500'] : ['rgb(39, 49, 66)', 'rgb(39, 49, 66)']}
+          style={styles.achievementIcon}
+        >
+          <ThemedText style={styles.achievementEmoji}>{unlocked ? icon : '🔒'}</ThemedText>
+        </LinearGradient>
+        <View style={styles.achievementText}>
+          <ThemedText style={[styles.achievementTitle, !unlocked && styles.textLocked]}>
+            {title}
+          </ThemedText>
+          <ThemedText style={[styles.achievementDesc, !unlocked && styles.textLocked]}>
+            {description}
+          </ThemedText>
         </View>
-      )}
-    </View>
+        {unlocked && (
+          <View style={styles.checkBadge}>
+            <ThemedText style={styles.checkText}>✓</ThemedText>
+          </View>
+        )}
+      </LinearGradient>
+    </Pressable>
   );
 }
 
-function UnitProgress({ 
-  title, 
-  completed, 
-  total, 
-  color 
-}: { 
-  title: string; 
-  completed: number; 
-  total: number; 
+function UnitProgress({
+  title,
+  completed,
+  total,
+  color
+}: {
+  title: string;
+  completed: number;
+  total: number;
   color: string;
 }) {
+  const colorScheme = useColorScheme() ?? 'light';
+
   return (
-    <View style={styles.unitProgress}>
-      <View style={styles.unitProgressHeader}>
-        <ThemedText style={styles.unitProgressTitle}>{title}</ThemedText>
-        <ThemedText style={styles.unitProgressCount}>
-          {completed}/{total}
-        </ThemedText>
-      </View>
-      <ProgressBar progress={completed / total} />
-    </View>
+    <Pressable style={({ pressed }) => [pressed && { opacity: 0.8 }]}>
+      <LinearGradient
+        colors={colorScheme === 'dark'
+          ? ['rgba(39, 49, 66, 0.8)', 'rgba(26, 31, 53, 0.6)']
+          : ['rgba(255,255,255,0.95)', 'rgba(248,250,252,0.8)']
+        }
+        style={styles.unitProgress}
+      >
+        <View style={styles.unitProgressHeader}>
+          <ThemedText style={styles.unitProgressTitle}>{title}</ThemedText>
+          <ThemedText style={styles.unitProgressCount}>
+            {completed}/{total}
+          </ThemedText>
+        </View>
+        <ProgressBar progress={completed / total} />
+      </LinearGradient>
+    </Pressable>
   );
 }
 
@@ -186,31 +234,46 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 24,
   },
+  headerCard: {
+    borderRadius: 24,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+  },
   header: {
     alignItems: 'center',
-    gap: 8,
-    paddingTop: 20,
-    paddingBottom: 10,
+    gap: 12,
   },
   avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#58cc02',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 16,
+    elevation: 8,
   },
   avatarText: {
-    fontSize: 40,
-    fontWeight: '800',
-    color: '#fff',
+    fontSize: 60,
   },
   username: {
-    fontSize: 24,
-    fontWeight: '800',
+    fontSize: 28,
+    fontWeight: '900',
+    letterSpacing: -0.5,
+    color: '#FFFFFF',
   },
   joinDate: {
     fontSize: 14,
-    color: '#afafaf',
+    color: '#D1D5DB',
+    fontWeight: '600',
   },
   statsGrid: {
     flexDirection: 'row',
@@ -220,35 +283,45 @@ const styles = StyleSheet.create({
   statCard: {
     flex: 1,
     minWidth: '45%',
-    backgroundColor: '#f7f7f7',
-    padding: 16,
-    borderRadius: 16,
-    alignItems: 'center',
-    gap: 8,
+    borderRadius: 20,
     overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  statCardGradient: {
+    padding: 20,
+    alignItems: 'center',
+    gap: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
+    borderRadius: 20,
   },
   statIcon: {
-    fontSize: 32,
-    lineHeight: 40,
+    fontSize: 48,
   },
   statValue: {
-    fontSize: 24,
-    fontWeight: '800',
-    lineHeight: 30,
+    fontSize: 32,
+    fontWeight: '900',
+    letterSpacing: -0.5,
   },
   statLabel: {
-    fontSize: 12,
-    color: '#777',
+    fontSize: 13,
+    color: '#D1D5DB',
     textAlign: 'center',
-    lineHeight: 16,
-    numberOfLines: 2,
+    fontWeight: '700',
   },
   section: {
     gap: 16,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: '800',
+    fontSize: 22,
+    fontWeight: '900',
+    letterSpacing: -0.5,
+    marginBottom: 4,
+    color: '#FFFFFF',
   },
   achievements: {
     gap: 12,
@@ -256,62 +329,83 @@ const styles = StyleSheet.create({
   achievement: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#f7f7f7',
-    borderRadius: 16,
-    gap: 12,
-  },
-  achievementLocked: {
-    opacity: 0.5,
+    padding: 20,
+    borderRadius: 20,
+    gap: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
   achievementIcon: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#fff',
+    width: 70,
+    height: 70,
+    borderRadius: 35,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  achievementIconLocked: {
-    backgroundColor: '#e5e5e5',
+    borderWidth: 3,
+    borderColor: 'rgba(255,255,255,0.3)',
+    shadowColor: '#FFD700',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   achievementEmoji: {
-    fontSize: 30,
-    lineHeight: 36,
+    fontSize: 36,
   },
   achievementText: {
     flex: 1,
-    gap: 4,
+    gap: 6,
   },
   achievementTitle: {
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 17,
+    fontWeight: '800',
+    letterSpacing: -0.3,
+    color: '#FFFFFF',
   },
   achievementDesc: {
     fontSize: 14,
-    color: '#777',
+    color: '#D1D5DB',
+    fontWeight: '600',
   },
   textLocked: {
-    color: '#afafaf',
+    opacity: 0.5,
   },
   checkBadge: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     backgroundColor: '#58cc02',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#fff',
+    shadowColor: '#58cc02',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.4,
+    shadowRadius: 4,
+    elevation: 4,
   },
   checkText: {
     color: '#fff',
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 18,
+    fontWeight: '900',
   },
   unitProgress: {
-    padding: 16,
-    backgroundColor: '#f7f7f7',
-    borderRadius: 16,
+    padding: 20,
+    borderRadius: 20,
     gap: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
   unitProgressHeader: {
     flexDirection: 'row',
@@ -319,13 +413,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   unitProgressTitle: {
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 17,
+    fontWeight: '800',
+    letterSpacing: -0.3,
+    color: '#FFFFFF',
   },
   unitProgressCount: {
-    fontSize: 14,
-    color: '#777',
-    fontWeight: '600',
+    fontSize: 15,
+    color: '#D1D5DB',
+    fontWeight: '700',
   },
 });
 

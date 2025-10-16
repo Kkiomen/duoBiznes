@@ -1,10 +1,11 @@
 import { ThemedText } from '@/components/themed-text';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Pressable, ScrollView, StyleSheet, View, Alert } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
 import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import Animated, { useSharedValue, useAnimatedStyle, withSpring, withSequence } from 'react-native-reanimated';
+import { Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring } from 'react-native-reanimated';
+import Svg, { Path } from 'react-native-svg';
 
 type NodeType = 'lesson' | 'practice' | 'story' | 'review' | 'character';
 type NodeState = 'locked' | 'available' | 'current' | 'completed';
@@ -151,9 +152,10 @@ function LessonNode({ node, onPress, offsetDirection }: {
 function CharacterNode({ node, onPress, offsetDirection }: {
   node: NodeData;
   onPress: () => void;
-  offsetDirection?: 'left' | 'right';
+  offsetDirection?: 'left' | 'right' | 'none';
 }) {
-  const offsetStyle = offsetDirection === 'left' ? styles.characterLeft : styles.characterRight;
+  const offsetStyle = offsetDirection === 'left' ? styles.characterLeft :
+                      offsetDirection === 'right' ? styles.characterRight : {};
 
   return (
     <Pressable
@@ -176,21 +178,24 @@ function CharacterNode({ node, onPress, offsetDirection }: {
 }
 
 export default function NoweScreen() {
+  const router = useRouter();
   const [nodes] = useState<NodeData[]>([
-    { id: 1, type: 'lesson', icon: '🔄', title: 'Odświeżanie', state: 'current', stars: 0, xp: 10 },
-    { id: 2, type: 'practice', icon: '⭐', title: 'Ćwiczenia', state: 'locked', stars: 0, xp: 5 },
-    { id: 3, type: 'character', icon: '🧑‍💼', title: 'Opowieść', state: 'locked', stars: 3, xp: 15 },
-    { id: 4, type: 'lesson', icon: '🎥', title: 'Słuchanie', state: 'locked', stars: 0, xp: 10 },
-    { id: 5, type: 'lesson', icon: '📖', title: 'Czytanie', state: 'locked', stars: 0, xp: 10 },
-    { id: 6, type: 'lesson', icon: '🎧', title: 'Słownictwo', state: 'locked', stars: 0, xp: 10 },
-    { id: 7, type: 'practice', icon: '⭐', title: 'Praktyka', state: 'locked', stars: 0, xp: 5 },
-    { id: 8, type: 'lesson', icon: '🎥', title: 'Mówienie', state: 'locked', stars: 0, xp: 10 },
-    { id: 9, type: 'lesson', icon: '📖', title: 'Gramatyka', state: 'locked', stars: 0, xp: 10 },
-    { id: 10, type: 'character', icon: '🙋', title: 'Dialog', state: 'locked', stars: 0, xp: 15 },
-    { id: 11, type: 'review', icon: '🎧', title: 'Powtórka', state: 'locked', stars: 0, xp: 20 },
+    { id: 1, type: 'lesson', icon: '🤖', title: 'Czym jest n8n?', state: 'current', stars: 0, xp: 50 },
+    { id: 2, type: 'lesson', icon: '⚙️', title: 'Workflow', state: 'locked', stars: 0, xp: 50 },
+    { id: 3, type: 'character', icon: '👩‍💼', title: 'Historia Ani', state: 'locked', stars: 3, xp: 30 },
+    { id: 4, type: 'lesson', icon: '🔗', title: "Node'y", state: 'locked', stars: 0, xp: 60 },
+    { id: 5, type: 'practice', icon: '🎯', title: 'Dopasuj node\'y', state: 'locked', stars: 0, xp: 40 },
+    { id: 6, type: 'lesson', icon: '🪝', title: 'Webhook', state: 'locked', stars: 0, xp: 50 },
+    { id: 7, type: 'practice', icon: '🎮', title: 'Zbuduj workflow', state: 'locked', stars: 0, xp: 60 },
+    { id: 8, type: 'lesson', icon: '❓', title: 'Node IF', state: 'locked', stars: 0, xp: 50 },
+    { id: 9, type: 'lesson', icon: '📊', title: 'Dane w n8n', state: 'locked', stars: 0, xp: 50 },
+    { id: 10, type: 'character', icon: '💡', title: 'Wskazówki', state: 'locked', stars: 0, xp: 20 },
+    { id: 11, type: 'lesson', icon: '📝', title: 'Wyrażenia', state: 'locked', stars: 0, xp: 60 },
+    { id: 12, type: 'practice', icon: '✍️', title: 'Ćwicz składnię', state: 'locked', stars: 0, xp: 50 },
+    { id: 13, type: 'review', icon: '🏆', title: 'Finałowe wyzwanie', state: 'locked', stars: 0, xp: 100 },
   ]);
 
-  const [moduleProgress] = useState({ completed: 1, total: 11 });
+  const [moduleProgress] = useState({ completed: 0, total: 13 });
 
   const handleNodePress = (node: NodeData) => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -204,7 +209,13 @@ export default function NoweScreen() {
         `Rozpocząć lekcję?\n\n💎 Nagroda: ${node.xp} XP`,
         [
           { text: 'Anuluj', style: 'cancel' },
-          { text: 'Rozpocznij', onPress: () => console.log('Start lesson') }
+          {
+            text: 'Rozpocznij',
+            onPress: () => {
+              void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+              router.push('/lesson-n8n?moduleId=n8n-basics');
+            }
+          }
         ]
       );
     } else if (node.state === 'completed') {
@@ -213,7 +224,13 @@ export default function NoweScreen() {
         `Ukończono z ${node.stars}⭐\nZdobyto: ${node.xp} XP\n\nChcesz poćwiczyć ponownie?`,
         [
           { text: 'Nie', style: 'cancel' },
-          { text: 'Ćwicz', onPress: () => console.log('Practice again') }
+          {
+            text: 'Ćwicz',
+            onPress: () => {
+              void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+              router.push('/lesson-n8n?moduleId=n8n-basics');
+            }
+          }
         ]
       );
     }
@@ -224,19 +241,76 @@ export default function NoweScreen() {
     Alert.alert(item, 'Funkcja w przygotowaniu...');
   };
 
-  const pathNodes = [
-    { nodeId: 1, offset: 'none', lineType: 'left', lineState: 'active' },
-    { nodeId: 2, offset: 'left', lineType: 'leftStrong', lineState: 'locked' },
-    { nodeId: 3, offset: 'none', lineType: 'right', lineState: 'locked' }, // character
-    { nodeId: 4, offset: 'right', lineType: 'center', lineState: 'locked' },
-    { nodeId: 5, offset: 'none', lineType: 'left', lineState: 'locked' },
-    { nodeId: 6, offset: 'left', lineType: 'right', lineState: 'locked' },
-    { nodeId: 7, offset: 'none', lineType: 'right', lineState: 'locked' },
-    { nodeId: 8, offset: 'right', lineType: 'centerLong', lineState: 'locked' },
-    { nodeId: 9, offset: 'none', lineType: 'rightLong', lineState: 'locked' },
-    { nodeId: 10, offset: 'none', lineType: 'center', lineState: 'locked' }, // character
-    { nodeId: 11, offset: 'right', lineType: 'none', lineState: 'locked' },
-  ];
+  // Automatyczne generowanie ścieżki z przemiennymi offsetami
+  const generatePathFromNodes = () => {
+    const offsets: ('left' | 'right' | 'none')[] = ['none', 'left', 'right', 'none', 'left', 'right'];
+    let offsetIndex = 0;
+
+    return nodes.map((node) => {
+      const offset = offsets[offsetIndex % offsets.length];
+      offsetIndex++;
+
+      // Określ stan linii - aktywna tylko dla pierwszego węzła jeśli jest current/available
+      const lineState = (node.state === 'current' || node.state === 'available') ? 'active' : 'locked';
+
+      return {
+        nodeId: node.id,
+        offset,
+        lineState
+      };
+    });
+  };
+
+  const pathNodes = generatePathFromNodes();
+
+  // Funkcja obliczająca pozycję X na podstawie offsetu węzła
+  // WAŻNE: To musi odpowiadać rzeczywistym pozycjom węzłów po zastosowaniu margin
+  const getNodeXPosition = (offset: string) => {
+    const screenWidth = 400; // Szerokość SVG
+    const centerX = screenWidth / 2; // 200 - środek ekranu
+
+    switch (offset) {
+      case 'left':
+        // marginRight: 100 przesuwa węzeł w lewo
+        return centerX - 50; // 150
+      case 'right':
+        // marginLeft: 100 przesuwa węzeł w prawo
+        return centerX + 50; // 250
+      case 'none':
+      default:
+        // Węzeł na środku
+        return centerX; // 200
+    }
+  };
+
+  // Funkcja generująca ścieżkę SVG łączącą dwa węzły
+  const generatePathBetweenNodes = (fromOffset: string, toOffset: string) => {
+    const startX = getNodeXPosition(fromOffset);
+    const endX = getNodeXPosition(toOffset);
+
+    // Wysokość linii - dostosowana do spacing między węzłami
+    const height = 80;
+
+    // Oblicz różnicę w X
+    const deltaX = Math.abs(endX - startX);
+
+    // Im większa różnica w X, tym bardziej kręta krzywa
+    const curveFactor = deltaX > 50 ? 0.4 : 0.3;
+
+    // Punkty kontrolne dla krzywej Béziera
+    const controlY1 = height * curveFactor;
+    const controlY2 = height * (1 - curveFactor);
+
+    // Punkty kontrolne X - tworzą płynną S-curve lub prostą krzywą
+    const midX = (startX + endX) / 2;
+
+    // Dla większych różnic dodaj więcej krzywizny
+    const controlX1 = startX + (midX - startX) * 0.6;
+    const controlX2 = midX + (endX - midX) * 0.6;
+
+    // Cubic Bezier curve
+    return `M ${startX} 0 C ${controlX1} ${controlY1}, ${controlX2} ${controlY2}, ${endX} ${height}`;
+  };
 
   const getLineColor = (state: string) => state === 'active' ? '#58CC02' : '#132D1E';
 
@@ -272,7 +346,7 @@ export default function NoweScreen() {
       </View>
 
       {/* Czerwona karta modułu z postępem */}
-      <Pressable onPress={() => Alert.alert('Moduł 1', 'Pogoda i rozmowy codzienne')}>
+      <Pressable onPress={() => Alert.alert('Sekcja 1', 'Podstawy n8n - poznaj automatyzację workflow')}>
         <View style={styles.moduleCardContainer}>
           <LinearGradient
             colors={['#FF4B4B', '#E03C3C']}
@@ -282,8 +356,8 @@ export default function NoweScreen() {
           >
             <View style={styles.moduleCardContent}>
               <View style={styles.moduleTextContainer}>
-                <ThemedText style={styles.moduleHeader}>MODUŁ 1, SEKCJA 9</ThemedText>
-                <ThemedText style={styles.moduleTitle}>Porozmawiaj o pogodzie</ThemedText>
+                <ThemedText style={styles.moduleHeader}>SEKCJA 1</ThemedText>
+                <ThemedText style={styles.moduleTitle}>Podstawy n8n</ThemedText>
                 <View style={styles.moduleProgress}>
                   <View style={styles.progressBarBg}>
                     <View style={[styles.progressBarFill, { width: `${(moduleProgress.completed / moduleProgress.total) * 100}%` }]} />
@@ -296,9 +370,9 @@ export default function NoweScreen() {
               <Pressable
                 onPress={(e) => {
                   e.stopPropagation();
-                  Alert.alert('Opcje modułu', '', [
-                    { text: 'Informacje' },
-                    { text: 'Przewodnik' },
+                  Alert.alert('Opcje sekcji', '', [
+                    { text: 'Informacje', onPress: () => Alert.alert('Podstawy n8n', 'Poznaj automatyzację workflow, node\'y i wyrażenia. 38 kroków, 380 XP do zdobycia!') },
+                    { text: 'Przewodnik', onPress: () => Alert.alert('Przewodnik', 'Dowiedz się czym jest n8n, jak budować workflow i pracować z danymi.') },
                     { text: 'Anuluj', style: 'cancel' }
                   ]);
                 }}
@@ -326,91 +400,29 @@ export default function NoweScreen() {
                 <CharacterNode
                   node={node}
                   onPress={() => handleNodePress(node)}
-                  offsetDirection={pathNode.offset === 'left' ? 'left' : pathNode.offset === 'right' ? 'right' : undefined}
+                  offsetDirection={pathNode.offset as 'left' | 'right' | 'none'}
                 />
               ) : (
                 <LessonNode
                   node={node}
                   onPress={() => handleNodePress(node)}
-                  offsetDirection={pathNode.offset as any}
+                  offsetDirection={pathNode.offset as 'left' | 'right' | 'none'}
                 />
               )}
 
               {/* Render connecting line */}
               {nextNode && (
                 <View style={styles.pathConnector}>
-                  {pathNode.lineType === 'left' && (
-                    <Svg height="60" width="400" style={styles.svgPath}>
-                      <Path
-                        d="M 200 0 C 200 20, 180 35, 160 60"
-                        stroke={getLineColor(pathNode.lineState)}
-                        strokeWidth="6"
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeDasharray="12,10"
-                      />
-                    </Svg>
-                  )}
-                  {pathNode.lineType === 'leftStrong' && (
-                    <Svg height="80" width="400" style={styles.svgPath}>
-                      <Path
-                        d="M 160 0 C 160 25, 140 45, 120 80"
-                        stroke={getLineColor(pathNode.lineState)}
-                        strokeWidth="6"
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeDasharray="12,10"
-                      />
-                    </Svg>
-                  )}
-                  {pathNode.lineType === 'right' && (
-                    <Svg height="60" width="400" style={styles.svgPath}>
-                      <Path
-                        d="M 160 0 C 160 20, 180 35, 200 60"
-                        stroke={getLineColor(pathNode.lineState)}
-                        strokeWidth="6"
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeDasharray="12,10"
-                      />
-                    </Svg>
-                  )}
-                  {pathNode.lineType === 'center' && (
-                    <Svg height="60" width="400" style={styles.svgPath}>
-                      <Path
-                        d="M 200 0 C 200 20, 220 35, 240 60"
-                        stroke={getLineColor(pathNode.lineState)}
-                        strokeWidth="6"
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeDasharray="12,10"
-                      />
-                    </Svg>
-                  )}
-                  {pathNode.lineType === 'centerLong' && (
-                    <Svg height="80" width="400" style={styles.svgPath}>
-                      <Path
-                        d="M 240 0 C 240 25, 180 50, 160 80"
-                        stroke={getLineColor(pathNode.lineState)}
-                        strokeWidth="6"
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeDasharray="12,10"
-                      />
-                    </Svg>
-                  )}
-                  {pathNode.lineType === 'rightLong' && (
-                    <Svg height="80" width="400" style={styles.svgPath}>
-                      <Path
-                        d="M 160 0 C 160 25, 200 50, 240 80"
-                        stroke={getLineColor(pathNode.lineState)}
-                        strokeWidth="6"
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeDasharray="12,10"
-                      />
-                    </Svg>
-                  )}
+                  <Svg height="80" width="400" style={styles.svgPath}>
+                    <Path
+                      d={generatePathBetweenNodes(pathNode.offset, nextNode.offset)}
+                      stroke={getLineColor(pathNode.lineState)}
+                      strokeWidth="6"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeDasharray="12,10"
+                    />
+                  </Svg>
                 </View>
               )}
             </View>
@@ -425,7 +437,7 @@ export default function NoweScreen() {
         <Pressable
           onPress={() => {
             void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-            Alert.alert('Rozpocznij lekcję', 'Odświeżanie - 10 XP');
+            router.push('/lesson-n8n?moduleId=n8n-basics');
           }}
           style={({ pressed }) => [
             styles.actionButton,
@@ -439,7 +451,7 @@ export default function NoweScreen() {
             style={styles.actionGradient}
           >
             <ThemedText style={styles.actionText}>KONTYNUUJ</ThemedText>
-            <ThemedText style={styles.actionSubtext}>Odświeżanie • 10 XP</ThemedText>
+            <ThemedText style={styles.actionSubtext}>Podstawy n8n • 380 XP</ThemedText>
           </LinearGradient>
         </Pressable>
       </View>
@@ -592,7 +604,6 @@ const styles = StyleSheet.create({
   // Węzły - wrapper z touch area
   nodeTouchWrapper: {
     alignItems: 'center',
-    minHeight: 180,
     zIndex: 10,
   },
   nodeWrapper: {
@@ -655,7 +666,8 @@ const styles = StyleSheet.create({
   // Node info (title & XP)
   nodeInfo: {
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: 12,
+    marginBottom: 8,
     gap: 4,
   },
   nodeTitle: {
@@ -734,13 +746,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     zIndex: 10,
     gap: 6,
-    minHeight: 180,
+    marginBottom: 8,
   },
   characterLeft: {
-    marginRight: 140,
+    marginRight: 100,
   },
   characterRight: {
-    marginLeft: 140,
+    marginLeft: 100,
   },
   characterBubble: {
     width: 120,

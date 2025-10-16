@@ -1,10 +1,18 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
+import { Text } from 'react-native';
 
 import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+
+// Komponent ikony emoji
+function EmojiIcon({ emoji, focused }: { emoji: string; focused: boolean }) {
+  return (
+    <Text style={{ fontSize: focused ? 28 : 24, marginBottom: 8 }}>
+      {emoji}
+    </Text>
+  );
+}
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -12,40 +20,69 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: '#58CC02',
+        tabBarInactiveTintColor: colorScheme === 'dark' ? '#9CA3AF' : '#6B7280',
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarStyle: {
-          backgroundColor: colorScheme === 'dark' ? '#0B1220' : '#fff',
-          borderTopColor: colorScheme === 'dark' ? '#1a1a1a' : '#e5e5e5',
+          backgroundColor: colorScheme === 'dark' ? 'rgb(19, 29, 45)' : '#FFFFFF',
+          borderTopColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
+          borderTopWidth: 1,
+          height: 72,
+          paddingBottom: 12,
+          paddingTop: 8,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: -3 },
+          shadowOpacity: colorScheme === 'dark' ? 0.4 : 0.15,
+          shadowRadius: 10,
+          elevation: 12,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '700',
+          marginTop: 2,
         },
       }}>
       <Tabs.Screen
-        name="index"
+        name="nowe"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: 'Nauka',
+          tabBarIcon: ({ focused }) => (
+            <EmojiIcon emoji="📚" focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen
         name="skills"
         options={{
-          title: 'Ścieżka',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="bolt.fill" color={color} />,
+          title: 'Ćwiczenia',
+          tabBarIcon: ({ focused }) => (
+            <EmojiIcon emoji="💪" focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen
-        name="nowe"
+        name="index"
         options={{
-          title: 'Nowe',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="star.fill" color={color} />,
+          title: 'Ranking',
+          tabBarIcon: ({ focused }) => (
+            <EmojiIcon emoji="🏆" focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
           title: 'Profil',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.circle.fill" color={color} />,
+          tabBarIcon: ({ focused }) => (
+            <EmojiIcon emoji="👤" focused={focused} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="explore"
+        options={{
+          href: null,
         }}
       />
     </Tabs>

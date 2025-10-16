@@ -1,4 +1,4 @@
-# 📱 10 Typów Lekcji n8n - Dokumentacja
+Braku# 📱 10 Typów Lekcji n8n - Dokumentacja
 
 ## Jak przetestować?
 1. Otwórz aplikację
