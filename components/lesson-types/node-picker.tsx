@@ -1,5 +1,8 @@
 import { ThemedText } from '@/components/themed-text';
 import { Pressable, StyleSheet, View } from 'react-native';
+import Animated, { FadeInDown, ZoomIn, useAnimatedStyle, useSharedValue, withSpring, withSequence } from 'react-native-reanimated';
+import { useEffect } from 'react';
+import { triggerSelectionHaptic, triggerSuccessHaptic, triggerErrorHaptic } from '@/hooks/use-animation-helpers';
 
 type NodeOption = {
   name: string;
@@ -24,20 +27,27 @@ export function NodePicker({
   onSelect,
 }: NodePickerProps) {
   return (
-    <View style={styles.container}>
-      <View style={styles.badgeContainer}>
+    <Animated.View style={styles.container} entering={FadeInDown.duration(400).springify()}>
+      <Animated.View
+        style={styles.badgeContainer}
+        entering={FadeInDown.delay(100).duration(300)}
+      >
         <View style={styles.badge}>
           <ThemedText style={styles.badgeText}>WYBIERZ NODE</ThemedText>
         </View>
-      </View>
-      
-      <ThemedText style={styles.task}>
-        Zadanie: {task}
-      </ThemedText>
+      </Animated.View>
 
-      <ThemedText style={styles.instruction}>
-        Który node n8n użyjesz?
-      </ThemedText>
+      <Animated.View entering={FadeInDown.delay(150).duration(400)}>
+        <ThemedText style={styles.task}>
+          Zadanie: {task}
+        </ThemedText>
+      </Animated.View>
+
+      <Animated.View entering={FadeInDown.delay(200).duration(400)}>
+        <ThemedText style={styles.instruction}>
+          Który node n8n użyjesz?
+        </ThemedText>
+      </Animated.View>
 
       <View style={styles.optionsGrid}>
         {options.map((option, i) => {
@@ -46,27 +56,102 @@ export function NodePicker({
           const isWrong = showResult && selected === i && i !== correctIndex;
 
           return (
-            <Pressable
+            <NodeOption
               key={i}
-              onPress={() => onSelect(i)}
-              disabled={showResult}
-              style={({ pressed }) => [
-                styles.option,
-                isSelected && !showResult && styles.optionSelected,
-                isCorrect && styles.optionCorrect,
-                isWrong && styles.optionWrong,
-                { transform: [{ scale: pressed ? 0.95 : 1 }] }
-              ]}
-            >
-              <ThemedText style={styles.optionIcon}>{option.icon}</ThemedText>
-              <ThemedText style={[styles.optionText, { color: '#3c3c3c' }]}>
-                {option.name}
-              </ThemedText>
-            </Pressable>
+              index={i}
+              option={option}
+              isSelected={isSelected}
+              isCorrect={isCorrect}
+              isWrong={isWrong}
+              onPress={() => {
+                triggerSelectionHaptic();
+                onSelect(i);
+              }}
+            />
           );
         })}
       </View>
-    </View>
+    </Animated.View>
+  );
+}
+
+function NodeOption({
+  index,
+  option,
+  isSelected,
+  isCorrect,
+  isWrong,
+  onPress,
+}: {
+  index: number;
+  option: NodeOption;
+  isSelected: boolean;
+  isCorrect: boolean;
+  isWrong: boolean;
+  onPress: () => void;
+}) {
+  const scale = useSharedValue(1);
+  const iconScale = useSharedValue(1);
+
+  useEffect(() => {
+    if (isCorrect) {
+      triggerSuccessHaptic();
+      scale.value = withSequence(
+        withSpring(1.1, { damping: 8 }),
+        withSpring(1, { damping: 12 })
+      );
+      iconScale.value = withSequence(
+        withSpring(1.3, { damping: 6 }),
+        withSpring(1, { damping: 10 })
+      );
+    } else if (isWrong) {
+      triggerErrorHaptic();
+      scale.value = withSequence(
+        withSpring(0.95, { damping: 5 }),
+        withSpring(1, { damping: 10 })
+      );
+    }
+  }, [isCorrect, isWrong]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const iconAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: iconScale.value }],
+  }));
+
+  return (
+    <Animated.View
+      entering={ZoomIn.delay(300 + index * 100).duration(400).springify()}
+      style={animatedStyle}
+    >
+      <Pressable
+        onPress={onPress}
+        disabled={isCorrect || isWrong}
+        style={({ pressed }) => [
+          styles.option,
+          isSelected && !isCorrect && !isWrong && styles.optionSelected,
+          isCorrect && styles.optionCorrect,
+          isWrong && styles.optionWrong,
+          {
+            transform: [{ scale: pressed ? 0.95 : 1 }],
+            shadowColor: isCorrect ? '#58cc02' : isWrong ? '#ea2b2b' : isSelected ? '#1cb0f6' : '#000',
+            shadowOpacity: isCorrect || isWrong || isSelected ? 0.25 : 0.08,
+            shadowRadius: isCorrect || isWrong || isSelected ? 12 : 8,
+            shadowOffset: { width: 0, height: 4 },
+            elevation: isCorrect || isWrong || isSelected ? 8 : 4,
+          }
+        ]}
+      >
+        <Animated.View style={iconAnimatedStyle}>
+          <ThemedText style={styles.optionIcon}>{option.icon}</ThemedText>
+        </Animated.View>
+        <ThemedText style={[styles.optionText, { color: '#3c3c3c' }]}>
+          {option.name}
+        </ThemedText>
+      </Pressable>
+    </Animated.View>
   );
 }
 
@@ -118,14 +203,17 @@ const styles = StyleSheet.create({
   },
   optionSelected: {
     borderColor: '#1cb0f6',
+    borderWidth: 3,
     backgroundColor: '#e0f2fe',
   },
   optionCorrect: {
     borderColor: '#58cc02',
+    borderWidth: 3,
     backgroundColor: '#d7ffb8',
   },
   optionWrong: {
     borderColor: '#ea2b2b',
+    borderWidth: 3,
     backgroundColor: '#ffdfe0',
   },
   optionIcon: {
@@ -137,6 +225,3 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-
-
-

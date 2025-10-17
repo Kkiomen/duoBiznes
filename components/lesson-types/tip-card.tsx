@@ -1,6 +1,7 @@
 import { ThemedText } from '@/components/themed-text';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, View } from 'react-native';
+import Animated, { FadeInDown, SlideInLeft, ZoomIn } from 'react-native-reanimated';
 
 type TipCardProps = {
   tip: string;
@@ -8,21 +9,23 @@ type TipCardProps = {
 
 export function TipCard({ tip }: TipCardProps) {
   return (
-    <View style={styles.container}>
+    <Animated.View style={styles.container} entering={SlideInLeft.duration(500).springify()}>
       <LinearGradient
         colors={['rgba(255, 150, 0, 0.2)', 'rgba(255, 150, 0, 0.08)']}
         style={styles.card}
       >
-        <View style={styles.header}>
-          <View style={styles.iconBubble}>
+        <Animated.View style={styles.header} entering={FadeInDown.delay(100).duration(400)}>
+          <Animated.View style={styles.iconBubble} entering={ZoomIn.delay(200).duration(500).springify()}>
             <ThemedText style={styles.icon}>💡</ThemedText>
-          </View>
+          </Animated.View>
           <ThemedText style={styles.title}>Wskazówka</ThemedText>
-        </View>
+        </Animated.View>
 
-        <ThemedText style={styles.tipText}>{tip}</ThemedText>
+        <Animated.View entering={FadeInDown.delay(300).duration(400)}>
+          <ThemedText style={styles.tipText}>{tip}</ThemedText>
+        </Animated.View>
       </LinearGradient>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -36,10 +39,10 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'rgba(255, 150, 0, 0.4)',
     shadowColor: '#ff9600',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 5,
   },
   header: {
     flexDirection: 'row',
@@ -54,6 +57,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 150, 0, 0.3)',
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#ff9600',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 3,
   },
   icon: {
     fontSize: 24,

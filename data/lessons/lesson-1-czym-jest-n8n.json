@@ -7,11 +7,9 @@
   "lessons": [
     {
       "id": 1,
-      "type": "story",
+      "type": "article",
       "content": {
-        "character": "👩‍💼",
-        "characterName": "Ania",
-        "story": "Poznaj Anię - właścicielkę małej firmy e-commerce. Każdego dnia spędza godziny na ręcznym kopiowaniu zamówień między systemami. To frustrujące i czasochłonne..."
+        "htmlContent": "<h1>Czym jest n8n?</h1><p>Poznaj <strong>Anię</strong> - właścicielkę małej firmy e-commerce. Każdego dnia spędza <u>godziny</u> na ręcznym kopiowaniu zamówień między systemami. To frustrujące i czasochłonne...</p><h2>n8n - automatyzacja dla każdego</h2><p><strong>n8n</strong> to potężne narzędzie do automatyzacji przepływu pracy (workflow automation). Pozwala łączyć różne aplikacje i usługi <strong>bez pisania kodu!</strong></p><h3>Kluczowe cechy n8n:</h3><ul><li>Wizualne budowanie workflow - jak klocki Lego</li><li>Ponad 300 gotowych integracji z popularnymi aplikacjami</li><li>No-code/low-code - dostępne dla każdego</li><li>Darmowa i open-source</li></ul><h2>Korzyści dla Twojego biznesu</h2><p>Dzięki n8n możesz <strong>zautomatyzować</strong> praktycznie każdy powtarzalny proces:</p><ol><li>Oszczędzaj czas na ręcznej pracy</li><li>Eliminuj błędy ludzkie</li><li>Zwiększ produktywność zespołu</li><li>Skaluj swój biznes efektywnie</li></ol><p>Ania odkryła, że może <strong>zaoszczędzić nawet 15 godzin tygodniowo</strong> dzięki automatyzacji swoich procesów biznesowych. Czas zacząć naukę! 🚀</p>"
       }
     },
     {

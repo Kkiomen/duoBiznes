@@ -1,6 +1,7 @@
 import { ThemedText } from '@/components/themed-text';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, View } from 'react-native';
+import Animated, { FadeInDown, ZoomIn, BounceIn } from 'react-native-reanimated';
 
 type ChallengeIntroProps = {
   title: string;
@@ -10,30 +11,38 @@ type ChallengeIntroProps = {
 
 export function ChallengeIntro({ title, description, emoji }: ChallengeIntroProps) {
   return (
-    <View style={styles.container}>
+    <Animated.View style={styles.container} entering={ZoomIn.duration(600).springify()}>
       <LinearGradient
         colors={['rgba(255, 75, 75, 0.2)', 'rgba(224, 60, 60, 0.1)']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.card}
       >
-        <View style={styles.emojiContainer}>
+        <Animated.View style={styles.emojiContainer} entering={BounceIn.delay(200).duration(800)}>
           <LinearGradient
             colors={['#FF4B4B', '#E03C3C']}
             style={styles.emojiBubble}
           >
             <ThemedText style={styles.emoji}>{emoji}</ThemedText>
           </LinearGradient>
-        </View>
+        </Animated.View>
 
-        <ThemedText style={styles.title}>{title}</ThemedText>
-        <ThemedText style={styles.description}>{description}</ThemedText>
+        <Animated.View entering={FadeInDown.delay(400).duration(400)}>
+          <ThemedText style={styles.title}>{title}</ThemedText>
+        </Animated.View>
 
-        <View style={styles.readyBadge}>
+        <Animated.View entering={FadeInDown.delay(500).duration(400)}>
+          <ThemedText style={styles.description}>{description}</ThemedText>
+        </Animated.View>
+
+        <Animated.View
+          style={styles.readyBadge}
+          entering={ZoomIn.delay(600).duration(400).springify()}
+        >
           <ThemedText style={styles.readyText}>Gotowy? Scrolluj dalej! 👇</ThemedText>
-        </View>
+        </Animated.View>
       </LinearGradient>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -47,10 +56,10 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'rgba(255, 75, 75, 0.3)',
     shadowColor: '#FF4B4B',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.25,
-    shadowRadius: 16,
-    elevation: 6,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 10,
     gap: 16,
     alignItems: 'center',
   },
@@ -66,10 +75,10 @@ const styles = StyleSheet.create({
     borderWidth: 4,
     borderColor: 'rgba(255, 255, 255, 0.4)',
     shadowColor: '#FF4B4B',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    elevation: 6,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.5,
+    shadowRadius: 16,
+    elevation: 8,
   },
   emoji: {
     fontSize: 50,

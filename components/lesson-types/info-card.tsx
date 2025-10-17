@@ -1,6 +1,7 @@
 import { ThemedText } from '@/components/themed-text';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, View } from 'react-native';
+import Animated, { FadeInDown, SlideInLeft, ZoomIn } from 'react-native-reanimated';
 
 type InfoCardProps = {
   icon: string;
@@ -11,39 +12,48 @@ type InfoCardProps = {
 
 export function InfoCard({ icon, heading, text, bullets }: InfoCardProps) {
   return (
-    <View style={styles.container}>
-      <View style={styles.badge}>
+    <Animated.View style={styles.container} entering={FadeInDown.duration(500).springify()}>
+      <Animated.View style={styles.badge} entering={SlideInLeft.delay(100).duration(400).springify()}>
         <ThemedText style={styles.badgeText}>NOWA WIEDZA</ThemedText>
-      </View>
+      </Animated.View>
 
       <LinearGradient
         colors={['rgba(28, 176, 246, 0.15)', 'rgba(28, 176, 246, 0.05)']}
         style={styles.card}
       >
-        <View style={styles.iconContainer}>
+        <Animated.View style={styles.iconContainer} entering={ZoomIn.delay(200).duration(600).springify()}>
           <LinearGradient
             colors={['#1cb0f6', '#0e8ecb']}
             style={styles.iconBubble}
           >
             <ThemedText style={styles.icon}>{icon}</ThemedText>
           </LinearGradient>
-        </View>
+        </Animated.View>
 
-        <ThemedText style={styles.heading}>{heading}</ThemedText>
-        <ThemedText style={styles.text}>{text}</ThemedText>
+        <Animated.View entering={FadeInDown.delay(300).duration(400)}>
+          <ThemedText style={styles.heading}>{heading}</ThemedText>
+        </Animated.View>
+
+        <Animated.View entering={FadeInDown.delay(400).duration(400)}>
+          <ThemedText style={styles.text}>{text}</ThemedText>
+        </Animated.View>
 
         {bullets && bullets.length > 0 && (
           <View style={styles.bulletsContainer}>
             {bullets.map((bullet, index) => (
-              <View key={index} style={styles.bulletRow}>
+              <Animated.View
+                key={index}
+                style={styles.bulletRow}
+                entering={FadeInDown.delay(500 + index * 80).duration(400).springify()}
+              >
                 <ThemedText style={styles.bulletPoint}>•</ThemedText>
                 <ThemedText style={styles.bulletText}>{bullet}</ThemedText>
-              </View>
+              </Animated.View>
             ))}
           </View>
         )}
       </LinearGradient>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -71,10 +81,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(28, 176, 246, 0.2)',
     shadowColor: '#1cb0f6',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 6,
     gap: 16,
   },
   iconContainer: {
@@ -89,10 +99,10 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: 'rgba(255, 255, 255, 0.3)',
     shadowColor: '#1cb0f6',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 8,
   },
   icon: {
     fontSize: 40,

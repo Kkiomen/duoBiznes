@@ -1,5 +1,8 @@
 import { ThemedText } from '@/components/themed-text';
 import { Pressable, StyleSheet, View } from 'react-native';
+import Animated, { FadeInDown, FadeIn, useAnimatedStyle, useSharedValue, withSpring, withSequence, withTiming } from 'react-native-reanimated';
+import { useEffect } from 'react';
+import { triggerSelectionHaptic, triggerSuccessHaptic } from '@/hooks/use-animation-helpers';
 
 type Pair = {
   left: string;
@@ -24,69 +27,144 @@ export function MatchPairs({
   onSelectLeft,
   onSelectRight,
 }: MatchPairsProps) {
+  const prevMatchedLength = useSharedValue(0);
+
+  useEffect(() => {
+    if (matched.length > prevMatchedLength.value) {
+      triggerSuccessHaptic();
+    }
+    prevMatchedLength.value = matched.length;
+  }, [matched.length]);
+
   return (
-    <View style={styles.container}>
-      <View style={styles.badgeContainer}>
+    <Animated.View style={styles.container} entering={FadeInDown.duration(400).springify()}>
+      <Animated.View
+        style={styles.badgeContainer}
+        entering={FadeInDown.delay(100).duration(300)}
+      >
         <View style={styles.badge}>
           <ThemedText style={styles.badgeText}>DOPASUJ PARY</ThemedText>
         </View>
-      </View>
-      
-      <ThemedText style={styles.instruction}>
-        Połącz node n8n z jego funkcją
-      </ThemedText>
+      </Animated.View>
+
+      <Animated.View entering={FadeInDown.delay(200).duration(400)}>
+        <ThemedText style={styles.instruction}>
+          Połącz node n8n z jego funkcją
+        </ThemedText>
+      </Animated.View>
 
       <View style={styles.pairsContainer}>
         {/* Left column */}
         <View style={styles.column}>
           {pairs.map((pair, i) => (
-            <Pressable
+            <MatchItem
               key={`left-${i}`}
-              onPress={() => onSelectLeft(i)}
-              disabled={matched.includes(i)}
-              style={({ pressed }) => [
-                styles.item,
-                selected?.leftIndex === i && styles.itemSelected,
-                matched.includes(i) && styles.itemMatched,
-                { transform: [{ scale: pressed ? 0.95 : 1 }] }
-              ]}
-            >
-              {pair.leftIcon && <ThemedText style={styles.icon}>{pair.leftIcon}</ThemedText>}
-              <ThemedText style={[styles.itemText, { color: '#3c3c3c' }]}>
-                {pair.left}
-              </ThemedText>
-            </Pressable>
+              index={i}
+              text={pair.left}
+              icon={pair.leftIcon}
+              isSelected={selected?.leftIndex === i}
+              isMatched={matched.includes(i)}
+              onPress={() => {
+                triggerSelectionHaptic();
+                onSelectLeft(i);
+              }}
+              delay={300 + i * 80}
+            />
           ))}
         </View>
 
         {/* Right column */}
         <View style={styles.column}>
           {pairs.map((pair, i) => (
-            <Pressable
+            <MatchItem
               key={`right-${i}`}
-              onPress={() => onSelectRight(i)}
-              disabled={matched.includes(i)}
-              style={({ pressed }) => [
-                styles.item,
-                selected?.rightIndex === i && styles.itemSelected,
-                matched.includes(i) && styles.itemMatched,
-                { transform: [{ scale: pressed ? 0.95 : 1 }] }
-              ]}
-            >
-              <ThemedText style={[styles.itemText, { color: '#3c3c3c' }]}>
-                {pair.right}
-              </ThemedText>
-            </Pressable>
+              index={i}
+              text={pair.right}
+              isSelected={selected?.rightIndex === i}
+              isMatched={matched.includes(i)}
+              onPress={() => {
+                triggerSelectionHaptic();
+                onSelectRight(i);
+              }}
+              delay={300 + i * 80 + 40}
+            />
           ))}
         </View>
       </View>
 
       {showResult && matched.length === pairs.length && (
-        <View style={styles.success}>
+        <Animated.View style={styles.success} entering={FadeIn.duration(600).delay(200)}>
           <ThemedText style={styles.successText}>✓ Wszystkie pary dopasowane!</ThemedText>
-        </View>
+        </Animated.View>
       )}
-    </View>
+    </Animated.View>
+  );
+}
+
+function MatchItem({
+  index,
+  text,
+  icon,
+  isSelected,
+  isMatched,
+  onPress,
+  delay,
+}: {
+  index: number;
+  text: string;
+  icon?: string;
+  isSelected: boolean;
+  isMatched: boolean;
+  onPress: () => void;
+  delay: number;
+}) {
+  const scale = useSharedValue(1);
+
+  useEffect(() => {
+    if (isMatched) {
+      scale.value = withSequence(
+        withSpring(1.1, { damping: 8 }),
+        withSpring(1, { damping: 12 })
+      );
+    } else if (isSelected) {
+      scale.value = withSpring(1.05, { damping: 10 });
+    } else {
+      scale.value = withSpring(1, { damping: 12 });
+    }
+  }, [isSelected, isMatched]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  return (
+    <Animated.View
+      entering={FadeInDown.delay(delay).duration(400).springify()}
+      style={animatedStyle}
+    >
+      <Pressable
+        onPress={onPress}
+        disabled={isMatched}
+        style={({ pressed }) => [
+          styles.item,
+          isSelected && styles.itemSelected,
+          isMatched && styles.itemMatched,
+          {
+            transform: [{ scale: pressed ? 0.95 : 1 }],
+            shadowColor: isMatched ? '#58cc02' : isSelected ? '#1cb0f6' : '#000',
+            shadowOpacity: isMatched || isSelected ? 0.25 : 0.08,
+            shadowRadius: isMatched || isSelected ? 10 : 6,
+            shadowOffset: { width: 0, height: 3 },
+            elevation: isMatched || isSelected ? 6 : 3,
+          }
+        ]}
+      >
+        {icon && <ThemedText style={styles.icon}>{icon}</ThemedText>}
+        <ThemedText style={[styles.itemText, { color: '#3c3c3c' }]}>
+          {text}
+        </ThemedText>
+      </Pressable>
+    </Animated.View>
   );
 }
 

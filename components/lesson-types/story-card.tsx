@@ -1,6 +1,7 @@
 import { ThemedText } from '@/components/themed-text';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, View } from 'react-native';
+import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
 
 type StoryCardProps = {
   character: string;
@@ -10,25 +11,33 @@ type StoryCardProps = {
 
 export function StoryCard({ character, story, characterName }: StoryCardProps) {
   return (
-    <View style={styles.container}>
+    <Animated.View style={styles.container} entering={FadeInDown.duration(500).springify()}>
       <LinearGradient
         colors={['rgba(88, 204, 2, 0.15)', 'rgba(88, 204, 2, 0.05)']}
         style={styles.card}
       >
-        <View style={styles.characterContainer}>
+        <Animated.View
+          style={styles.characterContainer}
+          entering={ZoomIn.delay(200).duration(600).springify()}
+        >
           <View style={styles.characterBubble}>
             <ThemedText style={styles.character}>{character}</ThemedText>
           </View>
           {characterName && (
-            <ThemedText style={styles.characterName}>{characterName}</ThemedText>
+            <Animated.View entering={FadeInDown.delay(400).duration(300)}>
+              <ThemedText style={styles.characterName}>{characterName}</ThemedText>
+            </Animated.View>
           )}
-        </View>
+        </Animated.View>
 
-        <View style={styles.storyContainer}>
+        <Animated.View
+          style={styles.storyContainer}
+          entering={FadeInDown.delay(500).duration(400)}
+        >
           <ThemedText style={styles.storyText}>{story}</ThemedText>
-        </View>
+        </Animated.View>
       </LinearGradient>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -42,10 +51,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(88, 204, 2, 0.2)',
     shadowColor: '#58CC02',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 6,
   },
   characterContainer: {
     alignItems: 'center',
@@ -61,6 +70,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 3,
     borderColor: 'rgba(88, 204, 2, 0.4)',
+    shadowColor: '#58CC02',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   character: {
     fontSize: 48,

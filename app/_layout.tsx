@@ -18,6 +18,7 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="lesson" options={{ headerShown: false, presentation: 'card' }} />
         <Stack.Screen name="lesson-demo" options={{ headerShown: false, presentation: 'card' }} />
+        <Stack.Screen name="lesson-n8n" options={{ headerShown: false, presentation: 'card' }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
       </Stack>
       <StatusBar style="auto" />

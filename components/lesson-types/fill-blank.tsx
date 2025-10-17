@@ -1,6 +1,9 @@
 import { ThemedText } from '@/components/themed-text';
 import { useState } from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
+import Animated, { FadeInDown, useAnimatedStyle, useSharedValue, withSpring, withSequence } from 'react-native-reanimated';
+import { useEffect } from 'react';
+import { triggerSuccessHaptic, triggerErrorHaptic } from '@/hooks/use-animation-helpers';
 
 type FillBlankProps = {
   sentence: string;
@@ -18,44 +21,93 @@ export function FillBlank({
   onAnswer,
 }: FillBlankProps) {
   const [answer, setAnswer] = useState('');
-
-  const handleSubmit = () => {
-    onAnswer(answer.trim().toLowerCase());
-  };
+  const inputScale = useSharedValue(1);
+  const checkmarkOpacity = useSharedValue(0);
 
   const isCorrect = showResult && answer.trim().toLowerCase() === correctAnswer.toLowerCase();
   const isWrong = showResult && answer.trim().toLowerCase() !== correctAnswer.toLowerCase();
 
+  useEffect(() => {
+    if (isCorrect) {
+      triggerSuccessHaptic();
+      inputScale.value = withSequence(
+        withSpring(1.03, { damping: 8 }),
+        withSpring(1, { damping: 12 })
+      );
+      checkmarkOpacity.value = withSpring(1, { damping: 10 });
+    } else if (isWrong) {
+      triggerErrorHaptic();
+      inputScale.value = withSequence(
+        withSpring(0.97, { damping: 5 }),
+        withSpring(1, { damping: 10 })
+      );
+    }
+  }, [isCorrect, isWrong]);
+
+  const inputAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: inputScale.value }],
+  }));
+
+  const checkmarkAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: checkmarkOpacity.value,
+    transform: [{ scale: checkmarkOpacity.value }],
+  }));
+
   return (
-    <View style={styles.container}>
-      <View style={styles.badgeContainer}>
+    <Animated.View style={styles.container} entering={FadeInDown.duration(400).springify()}>
+      <Animated.View
+        style={styles.badgeContainer}
+        entering={FadeInDown.delay(100).duration(300)}
+      >
         <View style={styles.badge}>
           <ThemedText style={styles.badgeText}>UZUPEŁNIJ LUKĘ</ThemedText>
         </View>
-      </View>
+      </Animated.View>
 
-      <ThemedText style={styles.sentence}>{sentence}</ThemedText>
+      <Animated.View entering={FadeInDown.delay(200).duration(400)}>
+        <ThemedText style={styles.sentence}>{sentence}</ThemedText>
+      </Animated.View>
 
-      <TextInput
-        style={[
-          styles.input,
-          isCorrect && styles.inputCorrect,
-          isWrong && styles.inputWrong,
-        ]}
-        placeholder={placeholder}
-        value={answer}
-        onChangeText={setAnswer}
-        editable={!showResult}
-        autoCapitalize="none"
-        autoCorrect={false}
-      />
+      <Animated.View
+        style={[styles.inputWrapper, inputAnimatedStyle]}
+        entering={FadeInDown.delay(300).duration(400).springify()}
+      >
+        <TextInput
+          style={[
+            styles.input,
+            isCorrect && styles.inputCorrect,
+            isWrong && styles.inputWrong,
+            {
+              shadowColor: isCorrect ? '#58cc02' : isWrong ? '#ea2b2b' : '#1cb0f6',
+              shadowOpacity: isCorrect || isWrong ? 0.25 : 0.15,
+              shadowRadius: isCorrect || isWrong ? 10 : 6,
+              shadowOffset: { width: 0, height: 3 },
+              elevation: isCorrect || isWrong ? 6 : 3,
+            }
+          ]}
+          placeholder={placeholder}
+          placeholderTextColor="#999"
+          value={answer}
+          onChangeText={setAnswer}
+          editable={!showResult}
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
+        {isCorrect && (
+          <Animated.View style={[styles.checkmark, checkmarkAnimatedStyle]}>
+            <ThemedText style={styles.checkmarkText}>✓</ThemedText>
+          </Animated.View>
+        )}
+      </Animated.View>
 
       {showResult && isWrong && (
-        <ThemedText style={styles.correctAnswer}>
-          Poprawna odpowiedź: {correctAnswer}
-        </ThemedText>
+        <Animated.View style={styles.correctAnswerContainer} entering={FadeInDown.duration(300)}>
+          <ThemedText style={styles.correctAnswer}>
+            Poprawna odpowiedź: <ThemedText style={styles.correctAnswerBold}>{correctAnswer}</ThemedText>
+          </ThemedText>
+        </Animated.View>
       )}
-    </View>
+    </Animated.View>
   );
 }
 
@@ -83,29 +135,60 @@ const styles = StyleSheet.create({
     lineHeight: 32,
     color: '#3c3c3c',
   },
+  inputWrapper: {
+    position: 'relative',
+  },
   input: {
     borderWidth: 2,
     borderColor: '#e5e5e5',
     borderRadius: 16,
     padding: 16,
+    paddingRight: 50,
     fontSize: 18,
     color: '#3c3c3c',
     backgroundColor: '#fff',
   },
   inputCorrect: {
     borderColor: '#58cc02',
+    borderWidth: 3,
     backgroundColor: '#d7ffb8',
   },
   inputWrong: {
     borderColor: '#ea2b2b',
+    borderWidth: 3,
     backgroundColor: '#ffdfe0',
+  },
+  checkmark: {
+    position: 'absolute',
+    right: 16,
+    top: '50%',
+    marginTop: -18,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#58cc02',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkmarkText: {
+    fontSize: 24,
+    color: '#fff',
+    fontWeight: '700',
+  },
+  correctAnswerContainer: {
+    padding: 12,
+    backgroundColor: '#e0f2fe',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#1cb0f6',
   },
   correctAnswer: {
     fontSize: 14,
-    color: '#58cc02',
+    color: '#1cb0f6',
     fontWeight: '600',
   },
+  correctAnswerBold: {
+    fontWeight: '800',
+    color: '#0e8ecb',
+  },
 });
-
-
-

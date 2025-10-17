@@ -1,6 +1,7 @@
 import { ThemedText } from '@/components/themed-text';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, View } from 'react-native';
+import Animated, { FadeInDown, SlideInLeft, ZoomIn } from 'react-native-reanimated';
 
 type ExampleCardProps = {
   title: string;
@@ -9,32 +10,41 @@ type ExampleCardProps = {
 
 export function ExampleCard({ title, steps }: ExampleCardProps) {
   return (
-    <View style={styles.container}>
-      <View style={styles.badge}>
+    <Animated.View style={styles.container} entering={FadeInDown.duration(500).springify()}>
+      <Animated.View style={styles.badge} entering={SlideInLeft.delay(100).duration(400).springify()}>
         <ThemedText style={styles.badgeText}>PRZYKŁAD</ThemedText>
-      </View>
+      </Animated.View>
 
       <LinearGradient
         colors={['rgba(139, 92, 246, 0.15)', 'rgba(139, 92, 246, 0.05)']}
         style={styles.card}
       >
-        <ThemedText style={styles.title}>{title}</ThemedText>
+        <Animated.View entering={FadeInDown.delay(200).duration(400)}>
+          <ThemedText style={styles.title}>{title}</ThemedText>
+        </Animated.View>
 
         <View style={styles.stepsContainer}>
           {steps.map((step, index) => (
-            <View key={index} style={styles.stepRow}>
-              <View style={styles.stepNumber}>
+            <Animated.View
+              key={index}
+              style={styles.stepRow}
+              entering={SlideInLeft.delay(300 + index * 100).duration(400).springify()}
+            >
+              <Animated.View
+                style={styles.stepNumber}
+                entering={ZoomIn.delay(350 + index * 100).duration(400).springify()}
+              >
                 <ThemedText style={styles.stepNumberText}>{index + 1}</ThemedText>
-              </View>
+              </Animated.View>
               <View style={styles.stepIconBubble}>
                 <ThemedText style={styles.stepIcon}>{step.icon}</ThemedText>
               </View>
               <ThemedText style={styles.stepText}>{step.text}</ThemedText>
-            </View>
+            </Animated.View>
           ))}
         </View>
       </LinearGradient>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -62,10 +72,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(139, 92, 246, 0.2)',
     shadowColor: '#8b5cf6',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 6,
     gap: 20,
   },
   title: {
@@ -89,6 +99,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(139, 92, 246, 0.3)',
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#8b5cf6',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 2,
   },
   stepNumberText: {
     fontSize: 14,

@@ -2,6 +2,7 @@ import { ThemedText } from '@/components/themed-text';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import Animated, { FadeInDown, SlideInLeft, ZoomIn } from 'react-native-reanimated';
 
 type DiagramNode = {
   icon: string;
@@ -15,22 +16,27 @@ type DiagramCardProps = {
 
 export function DiagramCard({ title, nodes }: DiagramCardProps) {
   return (
-    <View style={styles.container}>
-      <View style={styles.badge}>
+    <Animated.View style={styles.container} entering={FadeInDown.duration(500).springify()}>
+      <Animated.View style={styles.badge} entering={SlideInLeft.delay(100).duration(400).springify()}>
         <ThemedText style={styles.badgeText}>WORKFLOW</ThemedText>
-      </View>
+      </Animated.View>
 
       <LinearGradient
         colors={['rgba(16, 185, 129, 0.15)', 'rgba(16, 185, 129, 0.05)']}
         style={styles.card}
       >
-        <ThemedText style={styles.title}>{title}</ThemedText>
+        <Animated.View entering={FadeInDown.delay(200).duration(400)}>
+          <ThemedText style={styles.title}>{title}</ThemedText>
+        </Animated.View>
 
         <View style={styles.diagramContainer}>
           {nodes.map((node, index) => (
             <View key={index}>
               {/* Node */}
-              <View style={styles.nodeWrapper}>
+              <Animated.View
+                style={styles.nodeWrapper}
+                entering={ZoomIn.delay(300 + index * 150).duration(500).springify()}
+              >
                 <LinearGradient
                   colors={['#10b981', '#059669']}
                   style={styles.node}
@@ -38,11 +44,14 @@ export function DiagramCard({ title, nodes }: DiagramCardProps) {
                   <ThemedText style={styles.nodeIcon}>{node.icon}</ThemedText>
                 </LinearGradient>
                 <ThemedText style={styles.nodeLabel}>{node.label}</ThemedText>
-              </View>
+              </Animated.View>
 
               {/* Arrow connector */}
               {index < nodes.length - 1 && (
-                <View style={styles.arrowContainer}>
+                <Animated.View
+                  style={styles.arrowContainer}
+                  entering={FadeInDown.delay(400 + index * 150).duration(300)}
+                >
                   <Svg height="40" width="60" style={styles.svg}>
                     <Path
                       d="M 30 0 L 30 40"
@@ -61,13 +70,13 @@ export function DiagramCard({ title, nodes }: DiagramCardProps) {
                       strokeLinejoin="round"
                     />
                   </Svg>
-                </View>
+                </Animated.View>
               )}
             </View>
           ))}
         </View>
       </LinearGradient>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -95,10 +104,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(16, 185, 129, 0.2)',
     shadowColor: '#10b981',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 6,
     gap: 20,
   },
   title: {
@@ -125,10 +134,10 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: 'rgba(255, 255, 255, 0.3)',
     shadowColor: '#10b981',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 8,
   },
   nodeIcon: {
     fontSize: 36,

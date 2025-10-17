@@ -1,3 +1,4 @@
+import { ArticleCard } from '@/components/lesson-types/article-card';
 import { ChallengeIntro } from '@/components/lesson-types/challenge-intro';
 import { DiagramCard } from '@/components/lesson-types/diagram-card';
 import { DragSequence } from '@/components/lesson-types/drag-sequence';
@@ -81,7 +82,7 @@ export default function LessonN8nScreen() {
   };
 
   const isContentOnly = (lesson: LessonStep): boolean => {
-    return ['story', 'info', 'tip', 'example', 'diagram', 'challenge-intro'].includes(lesson.type);
+    return ['story', 'info', 'tip', 'example', 'diagram', 'challenge-intro', 'article'].includes(lesson.type);
   };
 
   const handleSelect = (value: any) => {
@@ -186,6 +187,8 @@ export default function LessonN8nScreen() {
         return <DiagramCard {...content} />;
       case 'challenge-intro':
         return <ChallengeIntro {...content} />;
+      case 'article':
+        return <ArticleCard {...content} />;
 
       // Interactive types
       case 'multiple-choice':

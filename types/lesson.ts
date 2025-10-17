@@ -32,6 +32,10 @@ export interface ChallengeIntroContent {
   emoji: string;
 }
 
+export interface ArticleContent {
+  htmlContent: string;
+}
+
 // Interactive lesson types (ćwiczenia)
 export interface MultipleChoiceContent {
   question: string;
@@ -86,6 +90,7 @@ export type LessonContent =
   | ExampleContent
   | DiagramContent
   | ChallengeIntroContent
+  | ArticleContent
   | MultipleChoiceContent
   | TrueFalseContent
   | MatchPairsContent
@@ -104,6 +109,7 @@ export type LessonType =
   | 'example'
   | 'diagram'
   | 'challenge-intro'
+  | 'article'
   // Interactive types
   | 'multiple-choice'
   | 'true-false'

@@ -48,10 +48,6 @@ export function DuolingoButton({
           {title}
         </Text>
       </LinearGradient>
-      <LinearGradient
-        colors={[getBorderColor(), getBorderColor()]}
-        style={styles.bottomBorder}
-      />
     </Pressable>
   );
 }
