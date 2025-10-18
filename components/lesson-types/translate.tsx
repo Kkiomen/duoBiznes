@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '700',
     lineHeight: 32,
-    color: '#3c3c3c',
+    color: '#ffffff',
   },
   instruction: {
     fontSize: 16,

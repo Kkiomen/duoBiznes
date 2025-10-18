@@ -26,6 +26,11 @@ export function FillBlank({
   const isCorrect = showResult && answer.trim().toLowerCase() === correctAnswer.toLowerCase();
   const isWrong = showResult && answer.trim().toLowerCase() !== correctAnswer.toLowerCase();
 
+  const handleAnswerChange = (text: string) => {
+    setAnswer(text);
+    onAnswer(text);
+  };
+
   useEffect(() => {
     if (isCorrect) {
       triggerSuccessHaptic();
@@ -76,18 +81,25 @@ export function FillBlank({
             styles.input,
             isCorrect && styles.inputCorrect,
             isWrong && styles.inputWrong,
-            {
-              shadowColor: isCorrect ? '#58cc02' : isWrong ? '#ea2b2b' : '#1cb0f6',
-              shadowOpacity: isCorrect || isWrong ? 0.25 : 0.15,
-              shadowRadius: isCorrect || isWrong ? 10 : 6,
+            isCorrect && {
+              shadowColor: '#58cc02',
+              shadowOpacity: 0.25,
+              shadowRadius: 10,
               shadowOffset: { width: 0, height: 3 },
-              elevation: isCorrect || isWrong ? 6 : 3,
+              elevation: 6,
+            },
+            isWrong && {
+              shadowColor: '#ea2b2b',
+              shadowOpacity: 0.25,
+              shadowRadius: 10,
+              shadowOffset: { width: 0, height: 3 },
+              elevation: 6,
             }
           ]}
           placeholder={placeholder}
           placeholderTextColor="#999"
           value={answer}
-          onChangeText={setAnswer}
+          onChangeText={handleAnswerChange}
           editable={!showResult}
           autoCapitalize="none"
           autoCorrect={false}
@@ -132,7 +144,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     lineHeight: 26,
-    color: '#1f2937',
+    color: '#ffffff',
   },
   inputWrapper: {
     position: 'relative',
@@ -144,10 +156,15 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingRight: 50,
     fontSize: 16,
-    color: '#1f2937',
+    color: '#3c3c3c',
     backgroundColor: '#fff',
     minHeight: 56,
     fontWeight: '600',
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 3,
   },
   inputCorrect: {
     borderColor: '#58cc02',

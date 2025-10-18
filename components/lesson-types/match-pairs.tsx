@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   instruction: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#3c3c3c',
+    color: '#ffffff',
   },
   pairsContainer: {
     flexDirection: 'row',
