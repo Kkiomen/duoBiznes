@@ -1,15 +1,17 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 
 import { HelloWave } from '@/components/hello-wave';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { DuolingoButton } from '@/components/ui/duolingo-button';
+import { useProfile } from '@/hooks/use-profile';
 import { Link, useRouter } from 'expo-router';
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { profile } = useProfile();
 
   return (
     <ParallaxScrollView
@@ -24,7 +26,28 @@ export default function HomeScreen() {
         <ThemedText type="title">duoBiznes AI</ThemedText>
         <HelloWave />
       </ThemedView>
-      
+
+      {/* User stats */}
+      {profile && (
+        <ThemedView style={styles.statsContainer}>
+          <View style={styles.statCard}>
+            <ThemedText style={styles.statIcon}>🔥</ThemedText>
+            <ThemedText style={styles.statValue}>{profile.stats.streak}</ThemedText>
+            <ThemedText style={styles.statLabel}>Dni streak</ThemedText>
+          </View>
+          <View style={styles.statCard}>
+            <ThemedText style={styles.statIcon}>⚡</ThemedText>
+            <ThemedText style={styles.statValue}>{profile.stats.xp}</ThemedText>
+            <ThemedText style={styles.statLabel}>Całkowite XP</ThemedText>
+          </View>
+          <View style={styles.statCard}>
+            <ThemedText style={styles.statIcon}>❤️</ThemedText>
+            <ThemedText style={styles.statValue}>{profile.stats.hearts}</ThemedText>
+            <ThemedText style={styles.statLabel}>Energia</ThemedText>
+          </View>
+        </ThemedView>
+      )}
+
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">🎯 TEST 10 TYPÓW LEKCJI</ThemedText>
         <ThemedText>
@@ -97,6 +120,35 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  statCard: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: 'rgba(88, 204, 2, 0.1)',
+    borderRadius: 16,
+    padding: 16,
+    gap: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(88, 204, 2, 0.2)',
+  },
+  statIcon: {
+    fontSize: 32,
+  },
+  statValue: {
+    fontSize: 24,
+    fontWeight: '900',
+    color: '#58CC02',
+  },
+  statLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    opacity: 0.7,
   },
   stepContainer: {
     gap: 8,

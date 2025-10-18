@@ -1,8 +1,8 @@
 import { ThemedText } from '@/components/themed-text';
-import { Pressable, StyleSheet, View } from 'react-native';
-import Animated, { FadeInDown, ZoomIn, useAnimatedStyle, useSharedValue, withSpring, withSequence } from 'react-native-reanimated';
+import { triggerErrorHaptic, triggerSelectionHaptic, triggerSuccessHaptic } from '@/hooks/use-animation-helpers';
 import { useEffect } from 'react';
-import { triggerSelectionHaptic, triggerSuccessHaptic, triggerErrorHaptic } from '@/hooks/use-animation-helpers';
+import { Pressable, StyleSheet, View } from 'react-native';
+import Animated, { FadeInDown, ZoomIn, useAnimatedStyle, useSharedValue, withSequence, withSpring } from 'react-native-reanimated';
 
 type NodeOption = {
   name: string;
@@ -27,7 +27,7 @@ export function NodePicker({
   onSelect,
 }: NodePickerProps) {
   return (
-    <Animated.View style={styles.container} entering={FadeInDown.duration(400).springify()}>
+    <Animated.View style={styles.container} entering={FadeInDown.duration(400)}>
       <Animated.View
         style={styles.badgeContainer}
         entering={FadeInDown.delay(100).duration(300)}
@@ -123,7 +123,7 @@ function NodeOption({
 
   return (
     <Animated.View
-      entering={ZoomIn.delay(300 + index * 100).duration(400).springify()}
+      entering={ZoomIn.delay(300 + index * 100).duration(400)}
       style={animatedStyle}
     >
       <Pressable
@@ -218,6 +218,9 @@ const styles = StyleSheet.create({
   },
   optionIcon: {
     fontSize: 48,
+    lineHeight: 56,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   optionText: {
     fontSize: 14,

@@ -1,7 +1,7 @@
 import { ThemedText } from '@/components/themed-text';
 import { LinearGradient } from 'expo-linear-gradient';
-import { StyleSheet, View } from 'react-native';
-import Animated, { FadeInDown, ZoomIn, BounceIn } from 'react-native-reanimated';
+import { StyleSheet } from 'react-native';
+import Animated, { BounceIn, FadeInDown, ZoomIn } from 'react-native-reanimated';
 
 type ChallengeIntroProps = {
   title: string;
@@ -11,7 +11,7 @@ type ChallengeIntroProps = {
 
 export function ChallengeIntro({ title, description, emoji }: ChallengeIntroProps) {
   return (
-    <Animated.View style={styles.container} entering={ZoomIn.duration(600).springify()}>
+    <Animated.View style={styles.container} entering={ZoomIn.duration(600)}>
       <LinearGradient
         colors={['rgba(255, 75, 75, 0.2)', 'rgba(224, 60, 60, 0.1)']}
         start={{ x: 0, y: 0 }}
@@ -37,7 +37,7 @@ export function ChallengeIntro({ title, description, emoji }: ChallengeIntroProp
 
         <Animated.View
           style={styles.readyBadge}
-          entering={ZoomIn.delay(600).duration(400).springify()}
+          entering={ZoomIn.delay(600).duration(400)}
         >
           <ThemedText style={styles.readyText}>Gotowy? Scrolluj dalej! 👇</ThemedText>
         </Animated.View>
@@ -82,6 +82,9 @@ const styles = StyleSheet.create({
   },
   emoji: {
     fontSize: 50,
+    lineHeight: 60,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   title: {
     fontSize: 26,

@@ -492,6 +492,9 @@ const styles = StyleSheet.create({
   },
   flagIcon: {
     fontSize: 32,
+    lineHeight: 38,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   redDot: {
     position: 'absolute',
@@ -506,6 +509,9 @@ const styles = StyleSheet.create({
   },
   statIcon: {
     fontSize: 28,
+    lineHeight: 34,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   statValue: {
     fontSize: 20,
@@ -652,15 +658,26 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.15)',
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'hidden',
+    overflow: 'visible',
+    padding: 4,
   },
 
   nodeIconActive: {
     fontSize: 48,
+    lineHeight: 64,
+    height: 64,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+    textAlign: 'center',
   },
 
   nodeIconGray: {
     fontSize: 40,
+    lineHeight: 52,
+    height: 52,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+    textAlign: 'center',
     opacity: 0.3,
   },
 
@@ -670,12 +687,15 @@ const styles = StyleSheet.create({
     marginTop: 12,
     marginBottom: 8,
     gap: 4,
+    paddingHorizontal: 4,
   },
   nodeTitle: {
     fontSize: 14,
     fontWeight: '700',
     color: '#FFF',
     textAlign: 'center',
+    lineHeight: 18,
+    includeFontPadding: false,
   },
   nodeTitleLocked: {
     opacity: 0.4,
@@ -707,6 +727,8 @@ const styles = StyleSheet.create({
   },
   nodeStar: {
     fontSize: 12,
+    lineHeight: 16,
+    includeFontPadding: false,
   },
 
   // Checkmark
@@ -727,6 +749,9 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 14,
     fontWeight: '900',
+    lineHeight: 18,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
 
   // Linie łączące

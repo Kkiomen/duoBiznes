@@ -10,8 +10,10 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { DuolingoButton } from '@/components/ui/duolingo-button';
 import { LessonHeader } from '@/components/ui/lesson-header';
+import { LessonSuccess } from '@/components/ui/lesson-success';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useState } from 'react';
+import { useProfile } from '@/hooks/use-profile';
+import { useState, useEffect, useRef } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 
 type LessonType = 
@@ -171,21 +173,49 @@ const lessonSteps: LessonStep[] = [
 ];
 
 export default function LessonDemoScreen() {
+  const { profile, actions } = useProfile();
   const [step, setStep] = useState(0);
   const [selected, setSelected] = useState<any>(null);
   const [textAnswer, setTextAnswer] = useState('');
   const [showResult, setShowResult] = useState(false);
   const [matchedPairs, setMatchedPairs] = useState<number[]>([]);
   const [userOrder, setUserOrder] = useState<number[]>([]);
+  const [earnedXP] = useState(100); // Demo earns 100 XP
+  const [mistakes, setMistakes] = useState(0);
+  const [startTime] = useState(Date.now());
+  const lessonCompletedRef = useRef(false);
   const colorScheme = useColorScheme() ?? 'light';
 
   const totalSteps = lessonSteps.length;
   const progress = step / totalSteps;
   const currentLesson = lessonSteps[step];
 
+  // Complete lesson when finished
+  useEffect(() => {
+    if (step >= totalSteps && !lessonCompletedRef.current) {
+      lessonCompletedRef.current = true;
+
+      const timeSpentMinutes = Math.round((Date.now() - startTime) / 1000 / 60);
+      const correctAnswers = totalSteps - mistakes;
+      const accuracy = totalSteps > 0 ? correctAnswers / totalSteps : 1;
+      const score = Math.round(accuracy * 100);
+
+      // Save lesson completion to profile
+      actions.completeLesson({
+        lessonId: 'demo-lesson',
+        moduleId: 'demo',
+        score,
+        accuracy,
+        xpEarned: earnedXP,
+        timeSpentMinutes: Math.max(1, timeSpentMinutes),
+        mistakes,
+      });
+    }
+  }, [step, totalSteps, earnedXP, mistakes, startTime, actions]);
+
   // Initialize userOrder for drag-sequence
   useState(() => {
-    if (currentLesson.type === 'drag-sequence' && userOrder.length === 0) {
+    if (currentLesson && currentLesson.type === 'drag-sequence' && userOrder.length === 0) {
       setUserOrder(currentLesson.data.initialOrder);
     }
   });
@@ -211,8 +241,13 @@ export default function LessonDemoScreen() {
     setUserOrder(newOrder);
   };
 
-  const handleCheck = () => {
+  const handleCheck = async () => {
     setShowResult(true);
+    if (!isCorrect()) {
+      // Wrong answer - use a heart
+      await actions.useHeart();
+      setMistakes(mistakes + 1);
+    }
   };
 
   const handleContinue = () => {
@@ -258,7 +293,7 @@ export default function LessonDemoScreen() {
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colorScheme === 'dark' ? '#0B1220' : '#fff' }]}>
       <ThemedView style={styles.container}>
-        <LessonHeader progress={progress} hearts={5} gems={25} />
+        <LessonHeader progress={progress} hearts={profile?.stats.hearts ?? 5} gems={profile?.stats.xp ?? 0} />
 
         <ScrollView style={styles.scrollContent} contentContainerStyle={styles.scrollContentContainer}>
           {step < totalSteps ? (
@@ -364,13 +399,11 @@ export default function LessonDemoScreen() {
               )}
             </View>
           ) : (
-            <View style={styles.successContainer}>
-              <ThemedText style={styles.successIcon}>🎉</ThemedText>
-              <ThemedText style={styles.successTitle}>Gratulacje!</ThemedText>
-              <ThemedText style={styles.successText}>
-                Przetestowałeś wszystkie 10 typów lekcji n8n
-              </ThemedText>
-            </View>
+            <LessonSuccess
+              title="Gratulacje!"
+              message="Przetestowałeś wszystkie 10 typów lekcji n8n! 🎊"
+              xpEarned={earnedXP}
+            />
           )}
         </ScrollView>
 

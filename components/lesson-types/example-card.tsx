@@ -10,8 +10,8 @@ type ExampleCardProps = {
 
 export function ExampleCard({ title, steps }: ExampleCardProps) {
   return (
-    <Animated.View style={styles.container} entering={FadeInDown.duration(500).springify()}>
-      <Animated.View style={styles.badge} entering={SlideInLeft.delay(100).duration(400).springify()}>
+    <Animated.View style={styles.container} entering={FadeInDown.duration(500)}>
+      <Animated.View style={styles.badge} entering={SlideInLeft.delay(100).duration(400)}>
         <ThemedText style={styles.badgeText}>PRZYKŁAD</ThemedText>
       </Animated.View>
 
@@ -28,11 +28,11 @@ export function ExampleCard({ title, steps }: ExampleCardProps) {
             <Animated.View
               key={index}
               style={styles.stepRow}
-              entering={SlideInLeft.delay(300 + index * 100).duration(400).springify()}
+              entering={SlideInLeft.delay(300 + index * 100).duration(400)}
             >
               <Animated.View
                 style={styles.stepNumber}
-                entering={ZoomIn.delay(350 + index * 100).duration(400).springify()}
+                entering={ZoomIn.delay(350 + index * 100).duration(400)}
               >
                 <ThemedText style={styles.stepNumberText}>{index + 1}</ThemedText>
               </Animated.View>

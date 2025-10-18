@@ -1,5 +1,5 @@
 import { HtmlRenderer } from '@/components/ui/html-renderer';
-import { StyleSheet, ScrollView } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
 type ArticleCardProps = {
@@ -8,7 +8,7 @@ type ArticleCardProps = {
 
 export function ArticleCard({ htmlContent }: ArticleCardProps) {
   return (
-    <Animated.View style={styles.container} entering={FadeInDown.duration(500).springify()}>
+    <Animated.View style={styles.container} entering={FadeInDown.duration(500)}>
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}

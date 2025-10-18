@@ -1,9 +1,8 @@
 import { ThemedText } from '@/components/themed-text';
-import { useState } from 'react';
+import { triggerErrorHaptic, triggerSuccessHaptic } from '@/hooks/use-animation-helpers';
+import { useEffect, useState } from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
-import Animated, { FadeInDown, useAnimatedStyle, useSharedValue, withSpring, withSequence } from 'react-native-reanimated';
-import { useEffect } from 'react';
-import { triggerSuccessHaptic, triggerErrorHaptic } from '@/hooks/use-animation-helpers';
+import Animated, { FadeInDown, useAnimatedStyle, useSharedValue, withSequence, withSpring } from 'react-native-reanimated';
 
 type FillBlankProps = {
   sentence: string;
@@ -54,7 +53,7 @@ export function FillBlank({
   }));
 
   return (
-    <Animated.View style={styles.container} entering={FadeInDown.duration(400).springify()}>
+    <Animated.View style={styles.container} entering={FadeInDown.duration(400)}>
       <Animated.View
         style={styles.badgeContainer}
         entering={FadeInDown.delay(100).duration(300)}
@@ -70,7 +69,7 @@ export function FillBlank({
 
       <Animated.View
         style={[styles.inputWrapper, inputAnimatedStyle]}
-        entering={FadeInDown.delay(300).duration(400).springify()}
+        entering={FadeInDown.delay(300).duration(400)}
       >
         <TextInput
           style={[
@@ -130,10 +129,10 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   sentence: {
-    fontSize: 24,
-    fontWeight: '700',
-    lineHeight: 32,
-    color: '#3c3c3c',
+    fontSize: 18,
+    fontWeight: '600',
+    lineHeight: 26,
+    color: '#1f2937',
   },
   inputWrapper: {
     position: 'relative',
@@ -141,26 +140,28 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 2,
     borderColor: '#e5e5e5',
-    borderRadius: 16,
+    borderRadius: 12,
     padding: 16,
     paddingRight: 50,
-    fontSize: 18,
-    color: '#3c3c3c',
+    fontSize: 16,
+    color: '#1f2937',
     backgroundColor: '#fff',
+    minHeight: 56,
+    fontWeight: '600',
   },
   inputCorrect: {
     borderColor: '#58cc02',
-    borderWidth: 3,
+    borderWidth: 2,
     backgroundColor: '#d7ffb8',
   },
   inputWrong: {
     borderColor: '#ea2b2b',
-    borderWidth: 3,
+    borderWidth: 2,
     backgroundColor: '#ffdfe0',
   },
   checkmark: {
     position: 'absolute',
-    right: 16,
+    right: 12,
     top: '50%',
     marginTop: -18,
     width: 36,
@@ -172,8 +173,11 @@ const styles = StyleSheet.create({
   },
   checkmarkText: {
     fontSize: 24,
+    lineHeight: 28,
     color: '#fff',
     fontWeight: '700',
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   correctAnswerContainer: {
     padding: 12,

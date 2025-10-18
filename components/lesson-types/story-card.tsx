@@ -11,14 +11,14 @@ type StoryCardProps = {
 
 export function StoryCard({ character, story, characterName }: StoryCardProps) {
   return (
-    <Animated.View style={styles.container} entering={FadeInDown.duration(500).springify()}>
+    <Animated.View style={styles.container} entering={FadeInDown.duration(500)}>
       <LinearGradient
         colors={['rgba(88, 204, 2, 0.15)', 'rgba(88, 204, 2, 0.05)']}
         style={styles.card}
       >
         <Animated.View
           style={styles.characterContainer}
-          entering={ZoomIn.delay(200).duration(600).springify()}
+          entering={ZoomIn.delay(200).duration(600)}
         >
           <View style={styles.characterBubble}>
             <ThemedText style={styles.character}>{character}</ThemedText>
@@ -78,6 +78,9 @@ const styles = StyleSheet.create({
   },
   character: {
     fontSize: 48,
+    lineHeight: 56,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   characterName: {
     fontSize: 16,

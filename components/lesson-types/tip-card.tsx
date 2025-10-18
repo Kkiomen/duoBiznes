@@ -1,6 +1,6 @@
 import { ThemedText } from '@/components/themed-text';
 import { LinearGradient } from 'expo-linear-gradient';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import Animated, { FadeInDown, SlideInLeft, ZoomIn } from 'react-native-reanimated';
 
 type TipCardProps = {
@@ -9,13 +9,13 @@ type TipCardProps = {
 
 export function TipCard({ tip }: TipCardProps) {
   return (
-    <Animated.View style={styles.container} entering={SlideInLeft.duration(500).springify()}>
+    <Animated.View style={styles.container} entering={SlideInLeft.duration(500)}>
       <LinearGradient
         colors={['rgba(255, 150, 0, 0.2)', 'rgba(255, 150, 0, 0.08)']}
         style={styles.card}
       >
         <Animated.View style={styles.header} entering={FadeInDown.delay(100).duration(400)}>
-          <Animated.View style={styles.iconBubble} entering={ZoomIn.delay(200).duration(500).springify()}>
+          <Animated.View style={styles.iconBubble} entering={ZoomIn.delay(200).duration(500)}>
             <ThemedText style={styles.icon}>💡</ThemedText>
           </Animated.View>
           <ThemedText style={styles.title}>Wskazówka</ThemedText>
@@ -65,6 +65,9 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: 24,
+    lineHeight: 30,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   title: {
     fontSize: 18,

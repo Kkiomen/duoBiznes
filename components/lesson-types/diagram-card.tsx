@@ -1,8 +1,8 @@
 import { ThemedText } from '@/components/themed-text';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, View } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
 import Animated, { FadeInDown, SlideInLeft, ZoomIn } from 'react-native-reanimated';
+import Svg, { Path } from 'react-native-svg';
 
 type DiagramNode = {
   icon: string;
@@ -16,8 +16,8 @@ type DiagramCardProps = {
 
 export function DiagramCard({ title, nodes }: DiagramCardProps) {
   return (
-    <Animated.View style={styles.container} entering={FadeInDown.duration(500).springify()}>
-      <Animated.View style={styles.badge} entering={SlideInLeft.delay(100).duration(400).springify()}>
+    <Animated.View style={styles.container} entering={FadeInDown.duration(500)}>
+      <Animated.View style={styles.badge} entering={SlideInLeft.delay(100).duration(400)}>
         <ThemedText style={styles.badgeText}>WORKFLOW</ThemedText>
       </Animated.View>
 
@@ -35,7 +35,7 @@ export function DiagramCard({ title, nodes }: DiagramCardProps) {
               {/* Node */}
               <Animated.View
                 style={styles.nodeWrapper}
-                entering={ZoomIn.delay(300 + index * 150).duration(500).springify()}
+                entering={ZoomIn.delay(300 + index * 150).duration(500)}
               >
                 <LinearGradient
                   colors={['#10b981', '#059669']}
@@ -141,6 +141,9 @@ const styles = StyleSheet.create({
   },
   nodeIcon: {
     fontSize: 36,
+    lineHeight: 42,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   nodeLabel: {
     fontSize: 13,

@@ -1,8 +1,8 @@
 import { ThemedText } from '@/components/themed-text';
-import { Pressable, StyleSheet, View } from 'react-native';
-import Animated, { FadeInDown, SlideInUp, useAnimatedStyle, useSharedValue, withSpring, withSequence } from 'react-native-reanimated';
+import { triggerErrorHaptic, triggerSelectionHaptic, triggerSuccessHaptic } from '@/hooks/use-animation-helpers';
 import { useEffect } from 'react';
-import { triggerSelectionHaptic, triggerSuccessHaptic, triggerErrorHaptic } from '@/hooks/use-animation-helpers';
+import { Pressable, StyleSheet, View } from 'react-native';
+import Animated, { FadeInDown, SlideInUp, useAnimatedStyle, useSharedValue, withSequence, withSpring } from 'react-native-reanimated';
 
 type TranslateProps = {
   sentence: string;
@@ -24,7 +24,7 @@ export function Translate({
   onSelect,
 }: TranslateProps) {
   return (
-    <Animated.View style={styles.container} entering={FadeInDown.duration(400).springify()}>
+    <Animated.View style={styles.container} entering={FadeInDown.duration(400)}>
       <Animated.View entering={FadeInDown.delay(100).duration(400)}>
         <ThemedText style={styles.sentence}>{sentence}</ThemedText>
       </Animated.View>
@@ -106,7 +106,7 @@ function AnswerButton({
 
   return (
     <Animated.View
-      entering={SlideInUp.delay(300 + index * 80).duration(400).springify()}
+      entering={SlideInUp.delay(300 + index * 80).duration(400)}
       style={animatedStyle}
     >
       <Pressable

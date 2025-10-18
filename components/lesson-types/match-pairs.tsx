@@ -1,8 +1,8 @@
 import { ThemedText } from '@/components/themed-text';
-import { Pressable, StyleSheet, View } from 'react-native';
-import Animated, { FadeInDown, FadeIn, useAnimatedStyle, useSharedValue, withSpring, withSequence, withTiming } from 'react-native-reanimated';
-import { useEffect } from 'react';
 import { triggerSelectionHaptic, triggerSuccessHaptic } from '@/hooks/use-animation-helpers';
+import { useEffect } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
+import Animated, { FadeIn, FadeInDown, useAnimatedStyle, useSharedValue, withSequence, withSpring } from 'react-native-reanimated';
 
 type Pair = {
   left: string;
@@ -37,7 +37,7 @@ export function MatchPairs({
   }, [matched.length]);
 
   return (
-    <Animated.View style={styles.container} entering={FadeInDown.duration(400).springify()}>
+    <Animated.View style={styles.container} entering={FadeInDown.duration(400)}>
       <Animated.View
         style={styles.badgeContainer}
         entering={FadeInDown.delay(100).duration(300)}
@@ -139,7 +139,7 @@ function MatchItem({
 
   return (
     <Animated.View
-      entering={FadeInDown.delay(delay).duration(400).springify()}
+      entering={FadeInDown.delay(delay).duration(400)}
       style={animatedStyle}
     >
       <Pressable

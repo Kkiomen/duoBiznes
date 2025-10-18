@@ -1,8 +1,8 @@
 import { ThemedText } from '@/components/themed-text';
-import { Pressable, StyleSheet, View } from 'react-native';
-import Animated, { FadeInDown, FadeIn, ZoomIn, useAnimatedStyle, useSharedValue, withSpring, withSequence, withTiming } from 'react-native-reanimated';
-import { useEffect } from 'react';
-import { triggerSelectionHaptic, triggerSuccessHaptic, triggerErrorHaptic } from '@/hooks/use-animation-helpers';
+import { triggerErrorHaptic, triggerSelectionHaptic, triggerSuccessHaptic } from '@/hooks/use-animation-helpers';
+import { useEffect, useState } from 'react';
+import { Pressable, StyleSheet, View, useColorScheme } from 'react-native';
+import Animated, { FadeInDown, ZoomIn, useAnimatedStyle, useSharedValue, withSequence, withSpring } from 'react-native-reanimated';
 
 type SwipeCardsProps = {
   statement: string;
@@ -17,61 +17,34 @@ export function SwipeCards({
   showFeedback,
   wasCorrect,
 }: SwipeCardsProps) {
-  const cardScale = useSharedValue(1);
-  const cardOpacity = useSharedValue(1);
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const [selected, setSelected] = useState<boolean | null>(null);
 
   const handleSwipe = (correct: boolean) => {
     triggerSelectionHaptic();
-
-    // Card swipe animation
-    cardOpacity.value = withTiming(0, { duration: 200 });
-    cardScale.value = withSequence(
-      withSpring(0.9, { damping: 10 }),
-      withTiming(1, { duration: 0 })
-    );
-
-    setTimeout(() => {
-      cardOpacity.value = withSpring(1, { damping: 12 });
-      cardScale.value = withSpring(1, { damping: 12 });
-    }, 250);
-
+    setSelected(correct);
     onSwipe(correct);
   };
 
   useEffect(() => {
-    if (wasCorrect === true) {
-      triggerSuccessHaptic();
-    } else if (wasCorrect === false) {
-      triggerErrorHaptic();
+    if (!showFeedback) {
+      setSelected(null);
     }
-  }, [wasCorrect]);
-
-  const cardAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: cardOpacity.value,
-    transform: [{ scale: cardScale.value }],
-  }));
+  }, [showFeedback]);
 
   return (
-    <Animated.View style={styles.container} entering={FadeInDown.duration(400).springify()}>
+    <Animated.View style={styles.container} entering={FadeInDown.duration(400)}>
       <Animated.View
         style={styles.badgeContainer}
         entering={FadeInDown.delay(100).duration(300)}
       >
         <View style={styles.badge}>
-          <ThemedText style={styles.badgeText}>SWIPE</ThemedText>
+          <ThemedText style={styles.badgeText}>PRAWDA/FAŁSZ</ThemedText>
         </View>
       </Animated.View>
 
-      <Animated.View entering={FadeInDown.delay(150).duration(400)}>
-        <ThemedText style={styles.instruction}>
-          Przesuń ✅ jeśli prawda, ❌ jeśli fałsz
-        </ThemedText>
-      </Animated.View>
-
-      <Animated.View
-        style={[styles.card, cardAnimatedStyle]}
-        entering={ZoomIn.delay(250).duration(500).springify()}
-      >
+      <Animated.View entering={FadeInDown.delay(200).duration(400)}>
         <ThemedText style={styles.statement}>{statement}</ThemedText>
       </Animated.View>
 
@@ -79,37 +52,29 @@ export function SwipeCards({
         <SwipeButton
           icon="❌"
           label="Fałsz"
-          color="#ffdfe0"
-          borderColor="#ea2b2b"
-          disabled={showFeedback}
+          isTrue={false}
+          selected={selected === false}
+          correct={showFeedback && wasCorrect !== null && !wasCorrect}
+          wrong={showFeedback && selected === false && wasCorrect === true}
+          showResult={showFeedback}
+          isDark={isDark}
           onPress={() => handleSwipe(false)}
-          delay={350}
+          delay={300}
         />
 
         <SwipeButton
           icon="✅"
           label="Prawda"
-          color="#d7ffb8"
-          borderColor="#58cc02"
-          disabled={showFeedback}
+          isTrue={true}
+          selected={selected === true}
+          correct={showFeedback && wasCorrect !== null && wasCorrect}
+          wrong={showFeedback && selected === true && wasCorrect === false}
+          showResult={showFeedback}
+          isDark={isDark}
           onPress={() => handleSwipe(true)}
-          delay={450}
+          delay={400}
         />
       </View>
-
-      {showFeedback && wasCorrect !== null && (
-        <Animated.View
-          style={[
-            styles.feedback,
-            wasCorrect ? styles.feedbackCorrect : styles.feedbackWrong
-          ]}
-          entering={FadeIn.duration(300)}
-        >
-          <ThemedText style={styles.feedbackText}>
-            {wasCorrect ? '✓ Dobrze!' : '✗ Źle!'}
-          </ThemedText>
-        </Animated.View>
-      )}
     </Animated.View>
   );
 }
@@ -117,50 +82,99 @@ export function SwipeCards({
 function SwipeButton({
   icon,
   label,
-  color,
-  borderColor,
-  disabled,
+  isTrue,
+  selected,
+  correct,
+  wrong,
+  showResult,
+  isDark,
   onPress,
   delay,
 }: {
   icon: string;
   label: string;
-  color: string;
-  borderColor: string;
-  disabled: boolean;
+  isTrue: boolean;
+  selected: boolean;
+  correct: boolean;
+  wrong: boolean;
+  showResult: boolean;
+  isDark: boolean;
   onPress: () => void;
   delay: number;
 }) {
   const scale = useSharedValue(1);
+  const translateX = useSharedValue(0);
+
+  // Trigger animations on state changes
+  useEffect(() => {
+    if (correct) {
+      triggerSuccessHaptic();
+      // Success bounce
+      scale.value = withSequence(
+        withSpring(1.05, { damping: 8 }),
+        withSpring(1, { damping: 12 })
+      );
+    } else if (wrong) {
+      triggerErrorHaptic();
+      // Shake animation
+      translateX.value = withSequence(
+        withSpring(-8, { damping: 5 }),
+        withSpring(8, { damping: 5 }),
+        withSpring(-8, { damping: 5 }),
+        withSpring(0, { damping: 8 })
+      );
+    }
+  }, [correct, wrong]);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
+    transform: [
+      { scale: scale.value },
+      { translateX: translateX.value }
+    ],
   }));
+
+  const getBorderColor = () => {
+    if (correct) return '#58cc02';
+    if (wrong) return '#ea2b2b';
+    if (selected) return '#1cb0f6';
+    return isDark ? '#404040' : '#e5e5e5';
+  };
+
+  const getBackgroundColor = () => {
+    if (correct) return isDark ? '#2d5016' : '#d7ffb8';
+    if (wrong) return isDark ? '#5c1b1b' : '#ffdfe0';
+    if (selected) return isDark ? '#1a5a7a' : '#dbeafe';
+    return isDark ? '#1f1f1f' : '#ffffff';
+  };
 
   return (
     <Animated.View
-      entering={ZoomIn.delay(delay).duration(400).springify()}
+      entering={ZoomIn.delay(delay).duration(400)}
       style={[{ flex: 1 }, animatedStyle]}
     >
       <Pressable
         onPress={onPress}
-        disabled={disabled}
+        disabled={showResult}
         style={({ pressed }) => [
           styles.swipeButton,
           {
-            backgroundColor: color,
-            borderColor: borderColor,
-            borderWidth: 2,
-            transform: [{ scale: pressed ? 0.92 : 1 }],
-            shadowColor: borderColor,
-            shadowOpacity: 0.3,
-            shadowRadius: 8,
-            shadowOffset: { width: 0, height: 4 },
-            elevation: 4,
-            opacity: disabled ? 0.5 : 1,
+            backgroundColor: getBackgroundColor(),
+            borderColor: getBorderColor(),
+            borderWidth: selected || correct || wrong ? 4 : 2,
+            opacity: pressed ? 0.9 : 1,
+            shadowColor: correct ? '#58cc02' : wrong ? '#ea2b2b' : selected ? '#1cb0f6' : '#000',
+            shadowOpacity: correct || wrong ? 0.3 : selected ? 0.35 : 0.1,
+            shadowRadius: correct || wrong ? 8 : selected ? 10 : 4,
+            shadowOffset: { width: 0, height: correct || wrong ? 3 : selected ? 4 : 2 },
+            elevation: correct || wrong ? 6 : selected ? 8 : 2,
           }
         ]}
       >
+        {selected && !showResult && (
+          <View style={styles.selectedBadge}>
+            <ThemedText style={styles.selectedCheckmark}>✓</ThemedText>
+          </View>
+        )}
         <ThemedText style={styles.swipeIcon}>{icon}</ThemedText>
         <ThemedText style={styles.swipeLabel}>{label}</ThemedText>
       </Pressable>
@@ -171,89 +185,76 @@ function SwipeButton({
 const styles = StyleSheet.create({
   container: {
     gap: 24,
-    alignItems: 'center',
+    paddingHorizontal: 4,
   },
   badgeContainer: {
-    alignSelf: 'flex-start',
+    alignItems: 'flex-start',
+    marginBottom: 4,
   },
   badge: {
     backgroundColor: '#f59e0b',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 16,
+    shadowColor: '#f59e0b',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   badgeText: {
     color: '#fff',
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  instruction: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#777',
-    textAlign: 'center',
-  },
-  card: {
-    width: '100%',
-    minHeight: 200,
-    padding: 24,
-    borderRadius: 20,
-    backgroundColor: '#fff',
-    borderWidth: 2,
-    borderColor: '#e5e5e5',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 6,
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.5,
   },
   statement: {
-    fontSize: 20,
-    fontWeight: '700',
-    lineHeight: 28,
-    color: '#3c3c3c',
-    textAlign: 'center',
+    fontSize: 24,
+    fontWeight: '800',
+    lineHeight: 32,
+    marginBottom: 4,
+    paddingHorizontal: 4,
   },
   buttonsContainer: {
     flexDirection: 'row',
-    gap: 20,
+    gap: 12,
     width: '100%',
   },
   swipeButton: {
-    padding: 20,
-    borderRadius: 16,
+    minHeight: 140,
+    paddingVertical: 24,
+    paddingHorizontal: 16,
+    borderRadius: 20,
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'center',
+    gap: 12,
+    overflow: 'hidden',
   },
   swipeIcon: {
-    fontSize: 40,
+    fontSize: 48,
+    lineHeight: 56,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   swipeLabel: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#3c3c3c',
+    fontSize: 15,
+    fontWeight: '800',
+    letterSpacing: 0.3,
   },
-  feedback: {
-    width: '100%',
-    padding: 16,
-    borderRadius: 12,
+  selectedBadge: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    backgroundColor: '#1cb0f6',
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  feedbackCorrect: {
-    backgroundColor: '#d7ffb8',
-    borderWidth: 2,
-    borderColor: '#58cc02',
-  },
-  feedbackWrong: {
-    backgroundColor: '#ffdfe0',
-    borderWidth: 2,
-    borderColor: '#ea2b2b',
-  },
-  feedbackText: {
+  selectedCheckmark: {
+    color: '#fff',
     fontSize: 18,
-    fontWeight: '700',
-    textAlign: 'center',
-    color: '#3c3c3c',
+    fontWeight: '900',
   },
 });

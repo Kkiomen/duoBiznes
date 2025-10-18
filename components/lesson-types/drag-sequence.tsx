@@ -1,8 +1,8 @@
 import { ThemedText } from '@/components/themed-text';
-import { Pressable, StyleSheet, View } from 'react-native';
-import Animated, { FadeInDown, useAnimatedStyle, useSharedValue, withSpring, withSequence, Layout } from 'react-native-reanimated';
-import { useEffect } from 'react';
 import { triggerSelectionHaptic } from '@/hooks/use-animation-helpers';
+import { useEffect } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
+import Animated, { FadeInDown, Layout, useAnimatedStyle, useSharedValue, withSequence, withSpring } from 'react-native-reanimated';
 
 type DragSequenceProps = {
   items: { text: string; icon: string }[];
@@ -31,7 +31,7 @@ export function DragSequence({
   };
 
   return (
-    <Animated.View style={styles.container} entering={FadeInDown.duration(400).springify()}>
+    <Animated.View style={styles.container} entering={FadeInDown.duration(400)}>
       <Animated.View
         style={styles.badgeContainer}
         entering={FadeInDown.delay(100).duration(300)}
@@ -116,8 +116,8 @@ function SequenceItem({
 
   return (
     <Animated.View
-      entering={FadeInDown.delay(delay).duration(400).springify()}
-      layout={Layout.springify()}
+      entering={FadeInDown.delay(delay).duration(400)}
+      layout={Layout}
       style={[styles.itemRow, animatedStyle]}
     >
       <View style={styles.orderNumber}>

@@ -1,11 +1,21 @@
 import { ThemedText } from '@/components/themed-text';
 import { ProgressBar } from '@/components/ui/progress-bar';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useProfile } from '@/hooks/use-profile';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 export default function ProfileScreen() {
   const colorScheme = useColorScheme() ?? 'light';
+  const { profile, loading } = useProfile();
+
+  if (loading || !profile) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color="#58CC02" />
+      </View>
+    );
+  }
 
   return (
     <ScrollView
@@ -27,10 +37,12 @@ export default function ProfileScreen() {
               colors={['#58cc02', '#46a302']}
               style={styles.avatar}
             >
-              <ThemedText style={styles.avatarText}>🤖</ThemedText>
+              <ThemedText style={styles.avatarText}>{profile.user.avatar}</ThemedText>
             </LinearGradient>
-            <ThemedText style={styles.username}>Uczący się AI</ThemedText>
-            <ThemedText style={styles.joinDate}>Dołączył w październiku 2025</ThemedText>
+            <ThemedText style={styles.username}>{profile.user.name}</ThemedText>
+            <ThemedText style={styles.joinDate}>
+              Dołączył {new Date(profile.user.joinDate).toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' })}
+            </ThemedText>
           </View>
         </LinearGradient>
 
@@ -38,25 +50,25 @@ export default function ProfileScreen() {
         <View style={styles.statsGrid}>
           <StatCard
             icon="🔥"
-            value="3"
+            value={profile.stats.streak.toString()}
             label="Dni z rzędu"
             color="#ff9600"
           />
           <StatCard
             icon="⚡"
-            value="120"
+            value={profile.stats.xp.toString()}
             label="Całkowite XP"
             color="#ffc800"
           />
           <StatCard
-            icon="💎"
-            value="25"
-            label="Klejnoty"
-            color="#1cb0f6"
+            icon="❤️"
+            value={`${profile.stats.hearts}/${profile.stats.maxHearts}`}
+            label="Energia"
+            color="#ff6b9d"
           />
           <StatCard
             icon="🏆"
-            value="5"
+            value={profile.progress.achievements.length.toString()}
             label="Osiągnięcia"
             color="#ffc800"
           />
@@ -64,50 +76,72 @@ export default function ProfileScreen() {
 
         {/* Osiągnięcia */}
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Osiągnięcia</ThemedText>
+          <ThemedText style={styles.sectionTitle}>
+            Osiągnięcia ({profile.progress.achievements.length})
+          </ThemedText>
           <View style={styles.achievements}>
-            <AchievementBadge
-              icon="🎯"
-              title="Pierwszy krok"
-              description="Ukończ pierwszą lekcję"
-              unlocked
-            />
-            <AchievementBadge
-              icon="🔥"
-              title="Gorący start"
-              description="3 dni z rzędu"
-              unlocked
-            />
-            <AchievementBadge
-              icon="⭐"
-              title="Perfekcja"
-              description="Zdobądź 3 gwiazdki"
-              unlocked={false}
-            />
-            <AchievementBadge
-              icon="🚀"
-              title="Rakieta"
-              description="Ukończ 10 lekcji"
-              unlocked={false}
-            />
+            {/* Show unlocked achievements */}
+            {profile.progress.achievements.map((achievement) => (
+              <AchievementBadge
+                key={achievement.id}
+                icon={achievement.icon}
+                title={achievement.title}
+                description={achievement.description}
+                unlocked={true}
+              />
+            ))}
+
+            {/* Show example locked achievements if user has less than 4 */}
+            {profile.learningStats.totalLessonsCompleted === 0 && (
+              <AchievementBadge
+                icon="🎯"
+                title="Pierwszy krok"
+                description="Ukończ pierwszą lekcję"
+                unlocked={false}
+              />
+            )}
+            {profile.stats.streak < 3 && (
+              <AchievementBadge
+                icon="🔥"
+                title="Gorący start"
+                description="3 dni z rzędu"
+                unlocked={false}
+              />
+            )}
+            {profile.learningStats.totalLessonsCompleted < 10 && (
+              <AchievementBadge
+                icon="🚀"
+                title="Rakieta"
+                description="Ukończ 10 lekcji"
+                unlocked={false}
+              />
+            )}
           </View>
         </View>
 
         {/* Postęp w jednostkach */}
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Postęp</ThemedText>
+          <ThemedText style={styles.sectionTitle}>Postęp nauki</ThemedText>
           <UnitProgress
-            title="Unit 1: Podstawy AI"
-            completed={2}
-            total={3}
+            title="Ukończone lekcje"
+            completed={profile.learningStats.totalLessonsCompleted}
+            total={profile.learningStats.totalLessonsCompleted + 5}
             color="#58cc02"
           />
-          <UnitProgress
-            title="Unit 2: Praktyka"
-            completed={0}
-            total={4}
-            color="#1cb0f6"
-          />
+          <View style={styles.statsRow}>
+            <View style={styles.statItem}>
+              <ThemedText style={styles.statItemLabel}>Czas nauki</ThemedText>
+              <ThemedText style={styles.statItemValue}>
+                {profile.learningStats.totalTimeMinutes} min
+              </ThemedText>
+            </View>
+            <View style={styles.statItem}>
+              <ThemedText style={styles.statItemLabel}>Trafność</ThemedText>
+              <ThemedText style={styles.statItemValue}>
+                {Math.round(profile.learningStats.averageAccuracy * 100)}%
+              </ThemedText>
+            </View>
+          </View>
         </View>
       </View>
     </ScrollView>
@@ -422,6 +456,31 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#D1D5DB',
     fontWeight: '700',
+  },
+  statsRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 12,
+  },
+  statItem: {
+    flex: 1,
+    padding: 20,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
+    alignItems: 'center',
+    gap: 8,
+  },
+  statItemLabel: {
+    fontSize: 13,
+    color: '#D1D5DB',
+    fontWeight: '600',
+  },
+  statItemValue: {
+    fontSize: 24,
+    fontWeight: '900',
+    color: '#58cc02',
   },
 });
 

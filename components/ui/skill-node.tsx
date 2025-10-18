@@ -168,13 +168,25 @@ const styles = StyleSheet.create({
     borderRadius: 43,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'visible',
+    padding: 4,
   },
   icon: {
     fontSize: 44,
+    lineHeight: 60,
+    height: 60,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+    textAlign: 'center',
   },
   lockedIcon: {
     fontSize: 40,
+    lineHeight: 52,
+    height: 52,
     opacity: 0.6,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+    textAlign: 'center',
   },
   starsContainer: {
     position: 'absolute',
@@ -188,6 +200,8 @@ const styles = StyleSheet.create({
   },
   star: {
     fontSize: 13,
+    lineHeight: 16,
+    includeFontPadding: false,
   },
   checkmark: {
     position: 'absolute',
@@ -211,12 +225,17 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: '900',
+    lineHeight: 22,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   title: {
     fontSize: 14,
     fontWeight: '700',
     textAlign: 'center',
     letterSpacing: 0.3,
+    lineHeight: 18,
+    includeFontPadding: false,
   },
   lockedTitle: {
     opacity: 0.4,

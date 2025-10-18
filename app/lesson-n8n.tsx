@@ -16,16 +16,19 @@ import { TrueFalse } from '@/components/lesson-types/true-false';
 import { ThemedText } from '@/components/themed-text';
 import { DuolingoButton } from '@/components/ui/duolingo-button';
 import { LessonHeader } from '@/components/ui/lesson-header';
+import { LessonSuccess } from '@/components/ui/lesson-success';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useLessonData } from '@/hooks/use-lesson-data';
+import { useProfile } from '@/hooks/use-profile';
 import { LessonStep } from '@/types/lesson';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 
 export default function LessonN8nScreen() {
   const { moduleId = 'n8n-basics' } = useLocalSearchParams<{ moduleId?: string }>();
   const { data: lessonModule, loading, error } = useLessonData(moduleId);
+  const { profile, actions } = useProfile();
   const [step, setStep] = useState(0);
   const [selected, setSelected] = useState<any>(null);
   const [textAnswer, setTextAnswer] = useState('');
@@ -33,8 +36,62 @@ export default function LessonN8nScreen() {
   const [matchedPairs, setMatchedPairs] = useState<number[]>([]);
   const [userOrder, setUserOrder] = useState<number[]>([]);
   const [earnedXP, setEarnedXP] = useState(0);
+  const [mistakes, setMistakes] = useState(0);
+  const [startTime] = useState(Date.now());
+  const lessonCompletedRef = useRef(false);
   const colorScheme = useColorScheme() ?? 'light';
   const router = useRouter();
+
+  // Complete lesson when finished - MUST be before any conditional returns
+  useEffect(() => {
+    if (!lessonModule || loading) return;
+    
+    const totalSteps = lessonModule.lessons.length;
+    if (step >= totalSteps && !lessonCompletedRef.current && earnedXP > 0) {
+      lessonCompletedRef.current = true;
+
+      const timeSpentMinutes = Math.round((Date.now() - startTime) / 1000 / 60);
+      const totalQuestions = lessonModule.lessons.filter((l) =>
+        [
+          'multiple-choice',
+          'true-false',
+          'match-pairs',
+          'drag-sequence',
+          'node-picker',
+          'fill-blank',
+          'swipe-cards',
+          'translate',
+        ].includes(l.type)
+      ).length;
+      const correctAnswers = totalQuestions - mistakes;
+      const accuracy = totalQuestions > 0 ? correctAnswers / totalQuestions : 1;
+      const score = Math.round(accuracy * 100);
+
+      // Save lesson completion to profile
+      actions.completeLesson({
+        lessonId: moduleId,
+        moduleId: moduleId,
+        score,
+        accuracy,
+        xpEarned: earnedXP,
+        timeSpentMinutes: Math.max(1, timeSpentMinutes),
+        mistakes,
+      });
+    }
+  }, [step, earnedXP, mistakes, moduleId, lessonModule, startTime, actions, loading]);
+
+  // Initialize userOrder for drag-sequence - MUST be before any conditional returns
+  useEffect(() => {
+    if (!lessonModule || loading) return;
+    
+    const currentLesson = lessonModule.lessons[step];
+    if (currentLesson?.type === 'drag-sequence' && userOrder.length === 0 && currentLesson.content) {
+      const content = currentLesson.content as any;
+      if (content?.initialOrder) {
+        setUserOrder(content.initialOrder);
+      }
+    }
+  }, [step, lessonModule, userOrder.length, loading]);
 
   if (loading) {
     return (
@@ -62,12 +119,6 @@ export default function LessonN8nScreen() {
   const progress = step / totalSteps;
   const currentLesson = lessonModule.lessons[step];
 
-  // Initialize userOrder for drag-sequence
-  if (currentLesson?.type === 'drag-sequence' && userOrder.length === 0) {
-    const content = currentLesson.content as any;
-    setUserOrder(content.initialOrder);
-  }
-
   const isInteractiveLesson = (lesson: LessonStep): boolean => {
     return [
       'multiple-choice',
@@ -94,11 +145,12 @@ export default function LessonN8nScreen() {
   };
 
   const handleMatchPairs = (leftIndex: number, rightIndex: number) => {
+    if (!currentLesson?.content) return;
     const content = currentLesson.content as any;
     if (leftIndex === rightIndex && !matchedPairs.includes(leftIndex)) {
       const newMatched = [...matchedPairs, leftIndex];
       setMatchedPairs(newMatched);
-      if (newMatched.length === content.pairs.length) {
+      if (content?.pairs && newMatched.length === content.pairs.length) {
         setShowResult(true);
       }
     }
@@ -108,10 +160,19 @@ export default function LessonN8nScreen() {
     setUserOrder(newOrder);
   };
 
-  const handleCheck = () => {
+  const handleCheck = async () => {
     setShowResult(true);
     if (isCorrect() && currentLesson.xp) {
       setEarnedXP(earnedXP + currentLesson.xp);
+    } else if (!isCorrect()) {
+      // Wrong answer - use a heart
+      const hasHeart = await actions.useHeart();
+      setMistakes(mistakes + 1);
+
+      if (!hasHeart) {
+        // No hearts left - could show a modal or redirect
+        // For now, just continue
+      }
     }
   };
 
@@ -129,9 +190,11 @@ export default function LessonN8nScreen() {
 
       // Initialize next lesson if drag-sequence
       const nextLesson = lessonModule.lessons[nextStep];
-      if (nextLesson.type === 'drag-sequence') {
+      if (nextLesson?.type === 'drag-sequence' && nextLesson.content) {
         const content = nextLesson.content as any;
-        setUserOrder(content.initialOrder);
+        if (content?.initialOrder) {
+          setUserOrder(content.initialOrder);
+        }
       }
     } else {
       // Lekcja ukończona
@@ -140,6 +203,7 @@ export default function LessonN8nScreen() {
   };
 
   const isCorrect = (): boolean => {
+    if (!currentLesson?.content) return false;
     const content = currentLesson.content as any;
 
     switch (currentLesson.type) {
@@ -161,16 +225,22 @@ export default function LessonN8nScreen() {
   };
 
   const canCheck = (): boolean => {
+    if (!currentLesson) return false;
     if (currentLesson.type === 'fill-blank') return textAnswer.trim().length > 0;
     if (currentLesson.type === 'match-pairs') {
+      if (!currentLesson.content) return false;
       const content = currentLesson.content as any;
-      return matchedPairs.length === content.pairs.length;
+      return matchedPairs.length === content?.pairs?.length;
     }
     if (currentLesson.type === 'drag-sequence') return true;
     return selected !== null;
   };
 
   const renderLesson = (lesson: LessonStep) => {
+    if (!lesson || !lesson.content) {
+      return <ThemedText>Brak danych lekcji</ThemedText>;
+    }
+
     const content = lesson.content as any;
 
     switch (lesson.type) {
@@ -297,7 +367,7 @@ export default function LessonN8nScreen() {
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colorScheme === 'dark' ? 'rgb(19, 29, 45)' : '#F8FAFC' }]}>
       <View style={styles.container}>
-        <LessonHeader progress={progress} hearts={5} gems={25} />
+        <LessonHeader progress={progress} hearts={profile?.stats.hearts ?? 5} gems={profile?.stats.xp ?? 0} />
 
         <ScrollView
           style={styles.scrollContent}
@@ -307,14 +377,11 @@ export default function LessonN8nScreen() {
           {step < totalSteps ? (
             <View style={styles.questionContainer}>{renderLesson(currentLesson)}</View>
           ) : (
-            <View style={styles.successContainer}>
-              <ThemedText style={styles.successIcon}>🎉</ThemedText>
-              <ThemedText style={styles.successTitle}>Gratulacje!</ThemedText>
-              <ThemedText style={styles.successText}>
-                Ukończyłeś moduł: {lessonModule.moduleTitle}
-              </ThemedText>
-              <ThemedText style={styles.xpText}>Zdobyto: {earnedXP} XP</ThemedText>
-            </View>
+            <LessonSuccess
+              title="Gratulacje!"
+              message={`Ukończyłeś moduł: ${lessonModule.moduleTitle}`}
+              xpEarned={earnedXP}
+            />
           )}
         </ScrollView>
 

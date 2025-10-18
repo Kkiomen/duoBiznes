@@ -12,8 +12,8 @@ type InfoCardProps = {
 
 export function InfoCard({ icon, heading, text, bullets }: InfoCardProps) {
   return (
-    <Animated.View style={styles.container} entering={FadeInDown.duration(500).springify()}>
-      <Animated.View style={styles.badge} entering={SlideInLeft.delay(100).duration(400).springify()}>
+    <Animated.View style={styles.container} entering={FadeInDown.duration(500)}>
+      <Animated.View style={styles.badge} entering={SlideInLeft.delay(100).duration(400)}>
         <ThemedText style={styles.badgeText}>NOWA WIEDZA</ThemedText>
       </Animated.View>
 
@@ -21,7 +21,7 @@ export function InfoCard({ icon, heading, text, bullets }: InfoCardProps) {
         colors={['rgba(28, 176, 246, 0.15)', 'rgba(28, 176, 246, 0.05)']}
         style={styles.card}
       >
-        <Animated.View style={styles.iconContainer} entering={ZoomIn.delay(200).duration(600).springify()}>
+        <Animated.View style={styles.iconContainer} entering={ZoomIn.delay(200).duration(600)}>
           <LinearGradient
             colors={['#1cb0f6', '#0e8ecb']}
             style={styles.iconBubble}
@@ -44,7 +44,7 @@ export function InfoCard({ icon, heading, text, bullets }: InfoCardProps) {
               <Animated.View
                 key={index}
                 style={styles.bulletRow}
-                entering={FadeInDown.delay(500 + index * 80).duration(400).springify()}
+                entering={FadeInDown.delay(500 + index * 80).duration(400)}
               >
                 <ThemedText style={styles.bulletPoint}>•</ThemedText>
                 <ThemedText style={styles.bulletText}>{bullet}</ThemedText>
@@ -106,6 +106,9 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: 40,
+    lineHeight: 48,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   heading: {
     fontSize: 22,

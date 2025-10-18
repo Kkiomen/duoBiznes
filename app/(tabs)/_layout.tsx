@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Text } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -8,7 +8,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 // Komponent ikony emoji
 function EmojiIcon({ emoji, focused }: { emoji: string; focused: boolean }) {
   return (
-    <Text style={{ fontSize: focused ? 28 : 24, marginBottom: 8 }}>
+    <Text style={[styles.emojiIcon, focused ? styles.emojiIconFocused : styles.emojiIconUnfocused]}>
       {emoji}
     </Text>
   );
@@ -88,3 +88,22 @@ export default function TabLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  emojiIcon: {
+    marginBottom: 6,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+    textAlign: 'center',
+  },
+  emojiIconFocused: {
+    fontSize: 28,
+    lineHeight: 40,
+    height: 40,
+  },
+  emojiIconUnfocused: {
+    fontSize: 24,
+    lineHeight: 36,
+    height: 36,
+  },
+});

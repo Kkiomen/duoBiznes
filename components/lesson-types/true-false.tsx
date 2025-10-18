@@ -1,8 +1,8 @@
 import { ThemedText } from '@/components/themed-text';
-import { Pressable, StyleSheet, View } from 'react-native';
-import Animated, { FadeInDown, SlideInLeft, SlideInRight, useAnimatedStyle, useSharedValue, withSpring, withSequence } from 'react-native-reanimated';
+import { triggerErrorHaptic, triggerSelectionHaptic, triggerSuccessHaptic } from '@/hooks/use-animation-helpers';
 import { useEffect } from 'react';
-import { triggerSelectionHaptic, triggerSuccessHaptic, triggerErrorHaptic } from '@/hooks/use-animation-helpers';
+import { Pressable, StyleSheet, View, useColorScheme } from 'react-native';
+import Animated, { FadeInDown, SlideInLeft, SlideInRight, useAnimatedStyle, useSharedValue, withSequence, withSpring } from 'react-native-reanimated';
 
 type TrueFalseProps = {
   statement: string;
@@ -22,7 +22,7 @@ export function TrueFalse({
   onSelect,
 }: TrueFalseProps) {
   return (
-    <Animated.View style={styles.container} entering={FadeInDown.duration(400).springify()}>
+    <Animated.View style={styles.container} entering={FadeInDown.duration(400)}>
       <Animated.View
         style={styles.badgeContainer}
         entering={FadeInDown.delay(100).duration(300)}
@@ -80,6 +80,8 @@ function TrueFalseButton({
   wrong: boolean;
   onPress: () => void;
 }) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const scale = useSharedValue(1);
   const iconScale = useSharedValue(1);
 
@@ -115,19 +117,19 @@ function TrueFalseButton({
     if (correct) return '#58cc02';
     if (wrong) return '#ea2b2b';
     if (selected) return '#1cb0f6';
-    return '#e5e5e5';
+    return isDark ? '#404040' : '#e5e5e5';
   };
 
   const getBackgroundColor = () => {
-    if (correct) return '#d7ffb8';
-    if (wrong) return '#ffdfe0';
-    if (selected) return '#e0f2fe';
-    return '#fff';
+    if (correct) return isDark ? '#2d5016' : '#d7ffb8';
+    if (wrong) return isDark ? '#5c1b1b' : '#ffdfe0';
+    if (selected) return isDark ? '#0c3a4d' : '#dbeafe';
+    return isDark ? '#1f1f1f' : '#ffffff';
   };
 
   return (
     <Animated.View
-      entering={isTrue ? SlideInLeft.delay(300).duration(400).springify() : SlideInRight.delay(300).duration(400).springify()}
+      entering={isTrue ? SlideInLeft.delay(300).duration(400) : SlideInRight.delay(300).duration(400)}
       style={[{ flex: 1 }, animatedStyle]}
     >
       <Pressable
@@ -138,20 +140,20 @@ function TrueFalseButton({
           {
             borderColor: getBorderColor(),
             backgroundColor: getBackgroundColor(),
-            borderWidth: selected ? 3 : 2,
-            transform: [{ scale: pressed ? 0.95 : 1 }],
+            borderWidth: selected || correct || wrong ? 3 : 2,
+            opacity: pressed ? 0.9 : 1,
             shadowColor: correct ? '#58cc02' : wrong ? '#ea2b2b' : selected ? '#1cb0f6' : '#000',
-            shadowOpacity: correct || wrong || selected ? 0.25 : 0.1,
-            shadowRadius: correct || wrong || selected ? 12 : 6,
-            shadowOffset: { width: 0, height: 4 },
-            elevation: correct || wrong || selected ? 8 : 4,
+            shadowOpacity: correct || wrong ? 0.3 : selected ? 0.2 : 0.1,
+            shadowRadius: correct || wrong ? 8 : selected ? 6 : 4,
+            shadowOffset: { width: 0, height: correct || wrong ? 3 : selected ? 2 : 1 },
+            elevation: correct || wrong ? 6 : selected ? 4 : 2,
           },
         ]}
       >
         <Animated.View style={iconAnimatedStyle}>
           <ThemedText style={styles.buttonIcon}>{isTrue ? '✓' : '✗'}</ThemedText>
         </Animated.View>
-        <ThemedText style={[styles.buttonText, { color: '#3c3c3c' }]}>
+        <ThemedText style={styles.buttonText}>
           {isTrue ? 'PRAWDA' : 'FAŁSZ'}
         </ThemedText>
       </Pressable>
@@ -161,61 +163,64 @@ function TrueFalseButton({
 
 const styles = StyleSheet.create({
   container: {
-    gap: 32,
+    gap: 24,
+    paddingHorizontal: 4,
   },
   badgeContainer: {
     alignItems: 'flex-start',
+    marginBottom: 4,
   },
   badge: {
     backgroundColor: '#ec4899',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 16,
+    shadowColor: '#ec4899',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   badgeText: {
     color: '#fff',
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.5,
   },
   statement: {
-    fontSize: 22,
-    fontWeight: '700',
-    lineHeight: 30,
-    color: '#3c3c3c',
-    textAlign: 'center',
+    fontSize: 24,
+    fontWeight: '800',
+    lineHeight: 32,
+    marginBottom: 8,
+    paddingHorizontal: 4,
   },
   buttonsContainer: {
     flexDirection: 'row',
-    gap: 16,
+    gap: 12,
+    paddingHorizontal: 4,
   },
   button: {
     flex: 1,
-    padding: 20,
-    borderRadius: 16,
+    minHeight: 140,
+    paddingVertical: 24,
+    paddingHorizontal: 16,
+    borderRadius: 20,
     borderWidth: 2,
-    borderColor: '#e5e5e5',
-    backgroundColor: '#fff',
     alignItems: 'center',
-    gap: 8,
-  },
-  buttonSelected: {
-    borderColor: '#1cb0f6',
-    backgroundColor: '#e0f2fe',
-  },
-  buttonCorrect: {
-    borderColor: '#58cc02',
-    backgroundColor: '#d7ffb8',
-  },
-  buttonWrong: {
-    borderColor: '#ea2b2b',
-    backgroundColor: '#ffdfe0',
+    justifyContent: 'center',
+    gap: 12,
+    overflow: 'hidden',
   },
   buttonIcon: {
-    fontSize: 32,
+    fontSize: 48,
+    lineHeight: 56,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   buttonText: {
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 15,
+    fontWeight: '800',
+    letterSpacing: 0.3,
   },
 });
 
