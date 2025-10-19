@@ -1,5 +1,6 @@
 import { ThemedText } from '@/components/themed-text';
 import { ProgressBar } from '@/components/ui/progress-bar';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useProfile } from '@/hooks/use-profile';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -8,6 +9,7 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'reac
 export default function ProfileScreen() {
   const colorScheme = useColorScheme() ?? 'light';
   const { profile, loading } = useProfile();
+  const { t, language, changeLanguage } = useLanguage();
 
   if (loading || !profile) {
     return (
@@ -41,7 +43,7 @@ export default function ProfileScreen() {
             </LinearGradient>
             <ThemedText style={styles.username}>{profile.user.name}</ThemedText>
             <ThemedText style={styles.joinDate}>
-              Dołączył {new Date(profile.user.joinDate).toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' })}
+              {t('profile.joinedDate', { date: new Date(profile.user.joinDate).toLocaleDateString(language === 'pl' ? 'pl-PL' : 'en-US', { month: 'long', year: 'numeric' }) })}
             </ThemedText>
           </View>
         </LinearGradient>
@@ -51,25 +53,25 @@ export default function ProfileScreen() {
           <StatCard
             icon="🔥"
             value={profile.stats.streak.toString()}
-            label="Dni z rzędu"
+            label={t('profile.stats.streak')}
             color="#ff9600"
           />
           <StatCard
             icon="⚡"
             value={profile.stats.xp.toString()}
-            label="Całkowite XP"
+            label={t('profile.stats.xp')}
             color="#ffc800"
           />
           <StatCard
             icon="❤️"
             value={`${profile.stats.hearts}/${profile.stats.maxHearts}`}
-            label="Energia"
+            label={t('profile.stats.energy')}
             color="#ff6b9d"
           />
           <StatCard
             icon="🏆"
             value={profile.progress.achievements.length.toString()}
-            label="Osiągnięcia"
+            label={t('profile.stats.achievements')}
             color="#ffc800"
           />
         </View>
@@ -77,7 +79,7 @@ export default function ProfileScreen() {
         {/* Osiągnięcia */}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>
-            Osiągnięcia ({profile.progress.achievements.length})
+            {t('profile.achievements.title', { count: profile.progress.achievements.length })}
           </ThemedText>
           <View style={styles.achievements}>
             {/* Show unlocked achievements */}
@@ -95,24 +97,24 @@ export default function ProfileScreen() {
             {profile.learningStats.totalLessonsCompleted === 0 && (
               <AchievementBadge
                 icon="🎯"
-                title="Pierwszy krok"
-                description="Ukończ pierwszą lekcję"
+                title={t('profile.achievements.firstStep.title')}
+                description={t('profile.achievements.firstStep.description')}
                 unlocked={false}
               />
             )}
             {profile.stats.streak < 3 && (
               <AchievementBadge
                 icon="🔥"
-                title="Gorący start"
-                description="3 dni z rzędu"
+                title={t('profile.achievements.hotStart.title')}
+                description={t('profile.achievements.hotStart.description')}
                 unlocked={false}
               />
             )}
             {profile.learningStats.totalLessonsCompleted < 10 && (
               <AchievementBadge
                 icon="🚀"
-                title="Rakieta"
-                description="Ukończ 10 lekcji"
+                title={t('profile.achievements.rocket.title')}
+                description={t('profile.achievements.rocket.description')}
                 unlocked={false}
               />
             )}
@@ -121,26 +123,77 @@ export default function ProfileScreen() {
 
         {/* Postęp w jednostkach */}
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Postęp nauki</ThemedText>
+          <ThemedText style={styles.sectionTitle}>{t('profile.progress.title')}</ThemedText>
           <UnitProgress
-            title="Ukończone lekcje"
+            title={t('profile.progress.lessonsCompleted')}
             completed={profile.learningStats.totalLessonsCompleted}
             total={profile.learningStats.totalLessonsCompleted + 5}
             color="#58cc02"
           />
           <View style={styles.statsRow}>
             <View style={styles.statItem}>
-              <ThemedText style={styles.statItemLabel}>Czas nauki</ThemedText>
+              <ThemedText style={styles.statItemLabel}>{t('profile.progress.learningTime')}</ThemedText>
               <ThemedText style={styles.statItemValue}>
-                {profile.learningStats.totalTimeMinutes} min
+                {t('profile.progress.minutes', { count: profile.learningStats.totalTimeMinutes })}
               </ThemedText>
             </View>
             <View style={styles.statItem}>
-              <ThemedText style={styles.statItemLabel}>Trafność</ThemedText>
+              <ThemedText style={styles.statItemLabel}>{t('profile.progress.accuracy')}</ThemedText>
               <ThemedText style={styles.statItemValue}>
                 {Math.round(profile.learningStats.averageAccuracy * 100)}%
               </ThemedText>
             </View>
+          </View>
+        </View>
+
+        {/* Przełącznik języka */}
+        <View style={styles.section}>
+          <ThemedText style={styles.sectionTitle}>{t('profile.language.title')}</ThemedText>
+          <View style={styles.languageButtons}>
+            <Pressable 
+              onPress={() => changeLanguage('pl')} 
+              style={({ pressed }) => [
+                styles.languageButton, 
+                language === 'pl' && styles.languageButtonActive,
+                pressed && { opacity: 0.8 }
+              ]}
+            >
+              <LinearGradient
+                colors={language === 'pl' 
+                  ? ['#58cc02', '#46a302'] 
+                  : colorScheme === 'dark'
+                    ? ['rgba(39, 49, 66, 0.8)', 'rgba(26, 31, 53, 0.6)']
+                    : ['rgba(255,255,255,0.95)', 'rgba(248,250,252,0.8)']
+                }
+                style={styles.languageButtonGradient}
+              >
+                <ThemedText style={[styles.languageButtonText, language === 'pl' && styles.languageButtonTextActive]}>
+                  🇵🇱 Polski
+                </ThemedText>
+              </LinearGradient>
+            </Pressable>
+            <Pressable 
+              onPress={() => changeLanguage('en')} 
+              style={({ pressed }) => [
+                styles.languageButton, 
+                language === 'en' && styles.languageButtonActive,
+                pressed && { opacity: 0.8 }
+              ]}
+            >
+              <LinearGradient
+                colors={language === 'en' 
+                  ? ['#58cc02', '#46a302'] 
+                  : colorScheme === 'dark'
+                    ? ['rgba(39, 49, 66, 0.8)', 'rgba(26, 31, 53, 0.6)']
+                    : ['rgba(255,255,255,0.95)', 'rgba(248,250,252,0.8)']
+                }
+                style={styles.languageButtonGradient}
+              >
+                <ThemedText style={[styles.languageButtonText, language === 'en' && styles.languageButtonTextActive]}>
+                  🇬🇧 English
+                </ThemedText>
+              </LinearGradient>
+            </Pressable>
           </View>
         </View>
       </View>
@@ -481,6 +534,39 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '900',
     color: '#58cc02',
+  },
+  languageButtons: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  languageButton: {
+    flex: 1,
+    borderRadius: 20,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  languageButtonActive: {
+    shadowColor: '#58cc02',
+    shadowOpacity: 0.3,
+  },
+  languageButtonGradient: {
+    padding: 20,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
+    borderRadius: 20,
+  },
+  languageButtonText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#D1D5DB',
+  },
+  languageButtonTextActive: {
+    color: '#fff',
   },
 });
 

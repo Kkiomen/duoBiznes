@@ -1,15 +1,18 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet } from 'react-native';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 
 interface LoadingScreenProps {
   message?: string;
 }
 
-export function LoadingScreen({ message = 'Ładowanie kursu...' }: LoadingScreenProps) {
+export function LoadingScreen({ message }: LoadingScreenProps) {
   const colorScheme = useColorScheme() ?? 'light';
+  const { t } = useLanguage();
+  const displayMessage = message || t('common.loadingCourse');
 
   return (
     <ThemedView style={styles.container}>
@@ -26,11 +29,11 @@ export function LoadingScreen({ message = 'Ładowanie kursu...' }: LoadingScreen
         </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(400).duration(400)}>
-          <ThemedText style={styles.message}>{message}</ThemedText>
+          <ThemedText style={styles.message}>{displayMessage}</ThemedText>
         </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(500).duration(400)}>
-          <ThemedText style={styles.hint}>To zajmie tylko chwilę...</ThemedText>
+          <ThemedText style={styles.hint}>{t('common.loadingHint')}</ThemedText>
         </Animated.View>
       </Animated.View>
     </ThemedView>

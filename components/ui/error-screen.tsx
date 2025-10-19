@@ -1,6 +1,7 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { DuolingoButton } from '@/components/ui/duolingo-button';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { StyleSheet, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 
@@ -10,6 +11,8 @@ interface ErrorScreenProps {
 }
 
 export function ErrorScreen({ error, onRetry }: ErrorScreenProps) {
+  const { t } = useLanguage();
+  
   return (
     <ThemedView style={styles.container}>
       <Animated.View entering={FadeIn.duration(400)} style={styles.content}>
@@ -18,7 +21,7 @@ export function ErrorScreen({ error, onRetry }: ErrorScreenProps) {
         </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(200).duration(400)}>
-          <ThemedText style={styles.title}>Coś poszło nie tak</ThemedText>
+          <ThemedText style={styles.title}>{t('common.errorTitle')}</ThemedText>
         </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(300).duration(400)}>
@@ -28,12 +31,12 @@ export function ErrorScreen({ error, onRetry }: ErrorScreenProps) {
         </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(400).duration(400)} style={styles.buttonContainer}>
-          <DuolingoButton title="Spróbuj ponownie" onPress={onRetry} variant="primary" />
+          <DuolingoButton title={t('common.retry')} onPress={onRetry} variant="primary" />
         </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(500).duration(400)}>
           <ThemedText style={styles.hint}>
-            Sprawdź czy backend działa na localhost:8000
+            {t('common.errorHint')}
           </ThemedText>
         </Animated.View>
       </Animated.View>

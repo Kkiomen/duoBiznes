@@ -1,23 +1,24 @@
-import { useState } from 'react';
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  SafeAreaView,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  TouchableOpacity,
-  Pressable,
-} from 'react-native';
-import { useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Image } from 'expo-image';
-import Animated, { FadeInRight, FadeOutLeft } from 'react-native-reanimated';
 import { ThemedText } from '@/components/themed-text';
 import { DuolingoButton } from '@/components/ui/duolingo-button';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import Animated, { FadeInRight, FadeOutLeft } from 'react-native-reanimated';
 
 export default function RegisterScreen() {
   // Multi-step state
@@ -36,6 +37,7 @@ export default function RegisterScreen() {
   const { register } = useAuth();
   const router = useRouter();
   const colorScheme = useColorScheme() ?? 'light';
+  const { t } = useLanguage();
 
   const nextStep = () => {
     setError(null);
@@ -50,17 +52,17 @@ export default function RegisterScreen() {
   const handleRegister = async () => {
     // Final validation
     if (!firstName || !email || !password || !passwordConfirmation) {
-      setError('Wypełnij wszystkie wymagane pola');
+      setError(t('auth.register.errors.fillFields'));
       return;
     }
 
     if (password.length < 8) {
-      setError('Hasło musi mieć minimum 8 znaków');
+      setError(t('auth.register.errors.passwordTooShort'));
       return;
     }
 
     if (password !== passwordConfirmation) {
-      setError('Hasła nie są identyczne');
+      setError(t('auth.register.errors.passwordMismatch'));
       return;
     }
 
@@ -81,7 +83,7 @@ export default function RegisterScreen() {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError('Wystąpił błąd podczas rejestracji');
+        setError(t('auth.register.errors.registerFailed'));
       }
     } finally {
       setIsLoading(false);
@@ -99,19 +101,19 @@ export default function RegisterScreen() {
         return (
           <Animated.View entering={FadeInRight} exiting={FadeOutLeft} style={styles.stepContainer}>
             <View style={styles.stepHeader}>
-              <ThemedText style={styles.stepTitle}>Hej!</ThemedText>
-              <ThemedText style={styles.stepSubtitle}>Powiedz nam jak się nazywasz</ThemedText>
+              <ThemedText style={styles.stepTitle}>{t('auth.register.step0.title')}</ThemedText>
+              <ThemedText style={styles.stepSubtitle}>{t('auth.register.step0.subtitle')}</ThemedText>
             </View>
 
             <View style={styles.stepForm}>
               <View style={styles.inputGroup}>
-                <ThemedText style={styles.label}>Imię</ThemedText>
+                <ThemedText style={styles.label}>{t('auth.register.step0.firstName')}</ThemedText>
                 <TextInput
                   style={[
                     styles.input,
                     { backgroundColor: colorScheme === 'dark' ? '#1a1f35' : '#fff', color: colorScheme === 'dark' ? '#fff' : '#000' },
                   ]}
-                  placeholder="Jan"
+                  placeholder={t('auth.register.step0.firstNamePlaceholder')}
                   placeholderTextColor={colorScheme === 'dark' ? '#6B7280' : '#9CA3AF'}
                   value={firstName}
                   onChangeText={setFirstName}
@@ -122,24 +124,24 @@ export default function RegisterScreen() {
               </View>
 
               <View style={styles.inputGroup}>
-                <ThemedText style={styles.label}>Nazwisko</ThemedText>
+                <ThemedText style={styles.label}>{t('auth.register.step0.lastName')}</ThemedText>
                 <TextInput
                   style={[
                     styles.input,
                     { backgroundColor: colorScheme === 'dark' ? '#1a1f35' : '#fff', color: colorScheme === 'dark' ? '#fff' : '#000' },
                   ]}
-                  placeholder="Kowalski"
+                  placeholder={t('auth.register.step0.lastNamePlaceholder')}
                   placeholderTextColor={colorScheme === 'dark' ? '#6B7280' : '#9CA3AF'}
                   value={lastName}
                   onChangeText={setLastName}
                   autoCapitalize="words"
                   autoCorrect={false}
                 />
-                <ThemedText style={styles.hint}>Możesz pominąć</ThemedText>
+                <ThemedText style={styles.hint}>{t('auth.register.step0.hint')}</ThemedText>
               </View>
 
               <DuolingoButton
-                title="Dalej"
+                title={t('auth.register.next')}
                 onPress={nextStep}
                 disabled={!canProceedStep0}
                 variant={!canProceedStep0 ? 'disabled' : 'primary'}
@@ -152,19 +154,19 @@ export default function RegisterScreen() {
         return (
           <Animated.View entering={FadeInRight} exiting={FadeOutLeft} style={styles.stepContainer}>
             <View style={styles.stepHeader}>
-              <ThemedText style={styles.stepTitle}>Świetnie, {firstName}!</ThemedText>
-              <ThemedText style={styles.stepSubtitle}>Jaki jest Twój adres email?</ThemedText>
+              <ThemedText style={styles.stepTitle}>{t('auth.register.step1.title', { name: firstName })}</ThemedText>
+              <ThemedText style={styles.stepSubtitle}>{t('auth.register.step1.subtitle')}</ThemedText>
             </View>
 
             <View style={styles.stepForm}>
               <View style={styles.inputGroup}>
-                <ThemedText style={styles.label}>Email</ThemedText>
+                <ThemedText style={styles.label}>{t('auth.register.step1.email')}</ThemedText>
                 <TextInput
                   style={[
                     styles.input,
                     { backgroundColor: colorScheme === 'dark' ? '#1a1f35' : '#fff', color: colorScheme === 'dark' ? '#fff' : '#000' },
                   ]}
-                  placeholder="twoj@email.com"
+                  placeholder={t('auth.register.step1.emailPlaceholder')}
                   placeholderTextColor={colorScheme === 'dark' ? '#6B7280' : '#9CA3AF'}
                   value={email}
                   onChangeText={setEmail}
@@ -177,11 +179,11 @@ export default function RegisterScreen() {
 
               <View style={styles.buttonRow}>
                 <Pressable onPress={prevStep} style={styles.backButton}>
-                  <ThemedText style={styles.backButtonText}>← Wstecz</ThemedText>
+                  <ThemedText style={styles.backButtonText}>{t('auth.register.back')}</ThemedText>
                 </Pressable>
                 <View style={{ flex: 1 }}>
                   <DuolingoButton
-                    title="Dalej"
+                    title={t('auth.register.next')}
                     onPress={nextStep}
                     disabled={!canProceedStep1}
                     variant={!canProceedStep1 ? 'disabled' : 'primary'}
@@ -196,19 +198,19 @@ export default function RegisterScreen() {
         return (
           <Animated.View entering={FadeInRight} exiting={FadeOutLeft} style={styles.stepContainer}>
             <View style={styles.stepHeader}>
-              <ThemedText style={styles.stepTitle}>Ostatni krok!</ThemedText>
-              <ThemedText style={styles.stepSubtitle}>Wymyśl bezpieczne hasło</ThemedText>
+              <ThemedText style={styles.stepTitle}>{t('auth.register.step2.title')}</ThemedText>
+              <ThemedText style={styles.stepSubtitle}>{t('auth.register.step2.subtitle')}</ThemedText>
             </View>
 
             <View style={styles.stepForm}>
               <View style={styles.inputGroup}>
-                <ThemedText style={styles.label}>Hasło</ThemedText>
+                <ThemedText style={styles.label}>{t('auth.register.step2.password')}</ThemedText>
                 <TextInput
                   style={[
                     styles.input,
                     { backgroundColor: colorScheme === 'dark' ? '#1a1f35' : '#fff', color: colorScheme === 'dark' ? '#fff' : '#000' },
                   ]}
-                  placeholder="••••••••"
+                  placeholder={t('auth.register.step2.passwordPlaceholder')}
                   placeholderTextColor={colorScheme === 'dark' ? '#6B7280' : '#9CA3AF'}
                   value={password}
                   onChangeText={setPassword}
@@ -217,17 +219,17 @@ export default function RegisterScreen() {
                   autoCorrect={false}
                   autoFocus
                 />
-                <ThemedText style={styles.hint}>Minimum 8 znaków</ThemedText>
+                <ThemedText style={styles.hint}>{t('auth.register.step2.hint')}</ThemedText>
               </View>
 
               <View style={styles.inputGroup}>
-                <ThemedText style={styles.label}>Potwierdź hasło</ThemedText>
+                <ThemedText style={styles.label}>{t('auth.register.step2.confirmPassword')}</ThemedText>
                 <TextInput
                   style={[
                     styles.input,
                     { backgroundColor: colorScheme === 'dark' ? '#1a1f35' : '#fff', color: colorScheme === 'dark' ? '#fff' : '#000' },
                   ]}
-                  placeholder="••••••••"
+                  placeholder={t('auth.register.step2.passwordPlaceholder')}
                   placeholderTextColor={colorScheme === 'dark' ? '#6B7280' : '#9CA3AF'}
                   value={passwordConfirmation}
                   onChangeText={setPasswordConfirmation}
@@ -245,11 +247,11 @@ export default function RegisterScreen() {
 
               <View style={styles.buttonRow}>
                 <Pressable onPress={prevStep} style={styles.backButton} disabled={isLoading}>
-                  <ThemedText style={styles.backButtonText}>← Wstecz</ThemedText>
+                  <ThemedText style={styles.backButtonText}>{t('auth.register.back')}</ThemedText>
                 </Pressable>
                 <View style={{ flex: 1 }}>
                   <DuolingoButton
-                    title={isLoading ? 'Tworzenie...' : 'Utwórz konto'}
+                    title={isLoading ? t('auth.register.creating') : t('auth.register.createAccount')}
                     onPress={handleRegister}
                     disabled={!canProceedStep2 || isLoading}
                     variant={!canProceedStep2 || isLoading ? 'disabled' : 'primary'}
@@ -295,9 +297,9 @@ export default function RegisterScreen() {
             {/* Login Link - tylko na pierwszym kroku */}
             {step === 0 && (
               <View style={styles.loginLink}>
-                <ThemedText style={styles.loginText}>Masz już konto? </ThemedText>
-                <TouchableOpacity onPress={() => router.back()}>
-                  <ThemedText style={styles.loginButton}>Zaloguj się</ThemedText>
+                <ThemedText style={styles.loginText}>{t('auth.register.hasAccount')}</ThemedText>
+                <TouchableOpacity onPress={() => router.replace('/(auth)/login')}>
+                  <ThemedText style={styles.loginButton}>{t('auth.register.loginLink')}</ThemedText>
                 </TouchableOpacity>
               </View>
             )}

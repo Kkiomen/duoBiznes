@@ -1,4 +1,5 @@
 import { ThemedText } from '@/components/themed-text';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect } from 'react';
 import { Dimensions, StyleSheet, View, useColorScheme } from 'react-native';
@@ -23,12 +24,16 @@ interface LessonSuccessProps {
 }
 
 export function LessonSuccess({
-  title = 'Gratulacje!',
-  message = 'Ukończyłeś lekcję!',
+  title,
+  message,
   xpEarned,
 }: LessonSuccessProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const { t } = useLanguage();
+  
+  const displayTitle = title || t('lesson.success.title');
+  const displayMessage = message || t('lesson.success.lessonComplete');
 
   // Confetti particles (increased count)
   const confettiCount = 50;
@@ -71,14 +76,14 @@ export function LessonSuccess({
         {/* Title with bounce */}
         <Animated.View entering={FadeInUp.duration(600).delay(800)}>
           <ThemedText style={[styles.title, isDark && styles.titleDark]}>
-            {title}
+            {displayTitle}
           </ThemedText>
         </Animated.View>
 
         {/* Message */}
         <Animated.View entering={FadeInUp.duration(600).delay(900)}>
           <ThemedText style={[styles.message, isDark && styles.messageDark]}>
-            {message}
+            {displayMessage}
           </ThemedText>
         </Animated.View>
 
@@ -100,7 +105,7 @@ export function LessonSuccess({
           <View style={[styles.achievementBadge, isDark && styles.achievementBadgeDark]}>
             <ThemedText style={styles.achievementIcon}>🏆</ThemedText>
             <ThemedText style={[styles.achievementText, isDark && styles.achievementTextDark]}>
-              Świetna robota!
+              {t('lesson.success.title')}
             </ThemedText>
           </View>
         </Animated.View>

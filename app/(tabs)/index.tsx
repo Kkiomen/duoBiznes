@@ -3,13 +3,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Dimensions, Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
-import { SvgXml } from 'react-native-svg';
 
 import { ThemedText } from '@/components/themed-text';
 import { ErrorScreen } from '@/components/ui/error-screen';
 import { LoadingScreen } from '@/components/ui/loading-screen';
 import { API_BASE_URL } from '@/constants/api';
-import {Image} from "expo-image";
+import { useLanguage } from '@/contexts/LanguageContext';
+import { Image } from "expo-image";
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -37,6 +37,7 @@ interface CoursePreview {
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [courses, setCourses] = useState<CoursePreview[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -55,14 +56,14 @@ export default function HomeScreen() {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: Nie udało się pobrać kursów`);
+        throw new Error(`HTTP ${response.status}: ${t('home.errors.fetchFailed')}`);
       }
 
       const data = await response.json();
       setCourses(data);
     } catch (err) {
       console.error('Błąd pobierania kursów:', err);
-      setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas ładowania kursów');
+      setError(err instanceof Error ? err.message : t('home.errors.genericError'));
     } finally {
       setLoading(false);
       if (isRefresh) setRefreshing(false);
@@ -85,7 +86,7 @@ export default function HomeScreen() {
 
   // Loading state
   if (loading && courses.length === 0) {
-    return <LoadingScreen message="Ładowanie kursów..." />;
+    return <LoadingScreen message={t('home.errors.loadingCourses')} />;
   }
 
   // Error state
@@ -115,16 +116,16 @@ export default function HomeScreen() {
               contentFit="contain"
           />
         <ThemedText style={styles.tagline}>
-          Ucz się biznesu z AI
+          {t('home.tagline')}
         </ThemedText>
       </View>
 
       {/* Sekcja kursów */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <ThemedText style={styles.sectionTitle}>📚 Dostępne kursy</ThemedText>
+          <ThemedText style={styles.sectionTitle}>{t('home.courses.title')}</ThemedText>
           <ThemedText style={styles.sectionSubtitle}>
-            Wybierz kurs i rozpocznij naukę
+            {t('home.courses.subtitle')}
           </ThemedText>
         </View>
 
@@ -154,13 +155,13 @@ export default function HomeScreen() {
                     <View style={styles.courseStat}>
                       <ThemedText style={styles.courseStatIcon}>📖</ThemedText>
                       <ThemedText style={styles.courseStatText}>
-                        {course.totalLessons} lekcji
+                        {t('home.courses.lessons', { count: course.totalLessons })}
                       </ThemedText>
                     </View>
                     <View style={styles.courseStat}>
                       <ThemedText style={styles.courseStatIcon}>⏱️</ThemedText>
                       <ThemedText style={styles.courseStatText}>
-                        ~{course.estimatedHours}h
+                        {t('home.courses.hours', { count: course.estimatedHours })}
                       </ThemedText>
                     </View>
                   </View>
@@ -177,9 +178,9 @@ export default function HomeScreen() {
       {/* Sekcja funkcjonalności dla firm */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <ThemedText style={styles.sectionTitle}>🏢 Dla Twojej firmy</ThemedText>
+          <ThemedText style={styles.sectionTitle}>{t('home.business.title')}</ThemedText>
           <ThemedText style={styles.sectionSubtitle}>
-            Dostępne wkrótce
+            {t('home.business.subtitle')}
           </ThemedText>
         </View>
 
@@ -189,13 +190,13 @@ export default function HomeScreen() {
               <ThemedText style={styles.featureIcon}>👥</ThemedText>
             </View>
             <View style={styles.featureContent}>
-              <ThemedText style={styles.featureTitle}>Zespoły</ThemedText>
+              <ThemedText style={styles.featureTitle}>{t('home.business.teams.title')}</ThemedText>
               <ThemedText style={styles.featureDescription}>
-                Zarządzaj uczeniem się całego zespołu
+                {t('home.business.teams.description')}
               </ThemedText>
             </View>
             <View style={styles.comingSoonBadge}>
-              <ThemedText style={styles.comingSoonText}>Wkrótce</ThemedText>
+              <ThemedText style={styles.comingSoonText}>{t('common.comingSoon')}</ThemedText>
             </View>
           </View>
 
@@ -204,13 +205,13 @@ export default function HomeScreen() {
               <ThemedText style={styles.featureIcon}>📊</ThemedText>
             </View>
             <View style={styles.featureContent}>
-              <ThemedText style={styles.featureTitle}>Raporty</ThemedText>
+              <ThemedText style={styles.featureTitle}>{t('home.business.reports.title')}</ThemedText>
               <ThemedText style={styles.featureDescription}>
-                Śledź postępy i statystyki zespołu
+                {t('home.business.reports.description')}
               </ThemedText>
             </View>
             <View style={styles.comingSoonBadge}>
-              <ThemedText style={styles.comingSoonText}>Wkrótce</ThemedText>
+              <ThemedText style={styles.comingSoonText}>{t('common.comingSoon')}</ThemedText>
             </View>
           </View>
 
@@ -219,13 +220,13 @@ export default function HomeScreen() {
               <ThemedText style={styles.featureIcon}>🎯</ThemedText>
             </View>
             <View style={styles.featureContent}>
-              <ThemedText style={styles.featureTitle}>Własne kursy</ThemedText>
+              <ThemedText style={styles.featureTitle}>{t('home.business.customCourses.title')}</ThemedText>
               <ThemedText style={styles.featureDescription}>
-                Twórz dedykowane materiały dla firmy
+                {t('home.business.customCourses.description')}
               </ThemedText>
             </View>
             <View style={styles.comingSoonBadge}>
-              <ThemedText style={styles.comingSoonText}>Wkrótce</ThemedText>
+              <ThemedText style={styles.comingSoonText}>{t('common.comingSoon')}</ThemedText>
             </View>
           </View>
 
@@ -234,13 +235,13 @@ export default function HomeScreen() {
               <ThemedText style={styles.featureIcon}>🤖</ThemedText>
             </View>
             <View style={styles.featureContent}>
-              <ThemedText style={styles.featureTitle}>AI Mentor</ThemedText>
+              <ThemedText style={styles.featureTitle}>{t('home.business.aiMentor.title')}</ThemedText>
               <ThemedText style={styles.featureDescription}>
-                Osobisty asystent AI dla każdego pracownika
+                {t('home.business.aiMentor.description')}
               </ThemedText>
             </View>
             <View style={styles.comingSoonBadge}>
-              <ThemedText style={styles.comingSoonText}>Wkrótce</ThemedText>
+              <ThemedText style={styles.comingSoonText}>{t('common.comingSoon')}</ThemedText>
             </View>
           </View>
         </View>
@@ -248,7 +249,7 @@ export default function HomeScreen() {
         <View style={styles.underConstructionBanner}>
           <ThemedText style={styles.constructionIcon}>🚧</ThemedText>
           <ThemedText style={styles.constructionText}>
-            Funkcjonalności dla firm są w budowie
+            {t('home.business.underConstruction')}
           </ThemedText>
         </View>
       </View>

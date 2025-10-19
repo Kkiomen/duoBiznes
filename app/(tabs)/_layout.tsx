@@ -3,6 +3,7 @@ import React from 'react';
 import { StyleSheet, Text } from 'react-native';
 
 import { HapticTab } from '@/components/haptic-tab';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 // Komponent ikony emoji
@@ -16,6 +17,7 @@ function EmojiIcon({ emoji, focused }: { emoji: string; focused: boolean }) {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const { t } = useLanguage();
 
   return (
     <Tabs
@@ -46,7 +48,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: t('tabs.home'),
           tabBarIcon: ({ focused }) => (
             <EmojiIcon emoji="🏠" focused={focused} />
           ),
@@ -55,7 +57,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="nowe"
         options={{
-          title: 'Nauka',
+          title: t('tabs.learn'),
           tabBarIcon: ({ focused }) => (
             <EmojiIcon emoji="📚" focused={focused} />
           ),
@@ -64,7 +66,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="skills"
         options={{
-          title: 'Ćwiczenia',
+          title: t('tabs.practice'),
           tabBarIcon: ({ focused }) => (
             <EmojiIcon emoji="💪" focused={focused} />
           ),
@@ -73,7 +75,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profil',
+          title: t('tabs.profile'),
           tabBarIcon: ({ focused }) => (
             <EmojiIcon emoji="👤" focused={focused} />
           ),

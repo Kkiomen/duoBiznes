@@ -1,0 +1,198 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "loadingCourse": "Loading course...",
+    "loadingHint": "This will only take a moment...",
+    "error": "Error",
+    "errorTitle": "Something went wrong",
+    "errorHint": "Check if the backend is running on localhost:8000",
+    "retry": "Try again",
+    "close": "Close",
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "save": "Save",
+    "comingSoon": "Coming Soon",
+    "or": "or"
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome back!",
+      "subtitle": "Log in to continue learning",
+      "email": "Email",
+      "password": "Password",
+      "emailPlaceholder": "your@email.com",
+      "passwordPlaceholder": "••••••••",
+      "loginButton": "Log in",
+      "loggingIn": "Logging in...",
+      "googleLogin": "Log in with Google",
+      "noAccount": "Don't have an account? ",
+      "registerLink": "Sign up",
+      "errors": {
+        "fillFields": "Enter email and password",
+        "loginFailed": "An error occurred during login",
+        "googleSoon": "Google login will be available soon"
+      }
+    },
+    "register": {
+      "title": "Join us!",
+      "subtitle": "Start your learning adventure",
+      "step0": {
+        "title": "Hey!",
+        "subtitle": "Tell us your name",
+        "firstName": "First name",
+        "lastName": "Last name",
+        "firstNamePlaceholder": "John",
+        "lastNamePlaceholder": "Doe",
+        "hint": "You can skip this"
+      },
+      "step1": {
+        "title": "Great, {{name}}!",
+        "subtitle": "What's your email address?",
+        "email": "Email",
+        "emailPlaceholder": "your@email.com"
+      },
+      "step2": {
+        "title": "Last step!",
+        "subtitle": "Create a secure password",
+        "password": "Password",
+        "confirmPassword": "Confirm password",
+        "passwordPlaceholder": "••••••••",
+        "hint": "Minimum 8 characters"
+      },
+      "next": "Next",
+      "back": "← Back",
+      "createAccount": "Create account",
+      "creating": "Creating...",
+      "hasAccount": "Already have an account? ",
+      "loginLink": "Log in",
+      "errors": {
+        "fillFields": "Fill in all required fields",
+        "passwordTooShort": "Password must be at least 8 characters",
+        "passwordMismatch": "Passwords do not match",
+        "registerFailed": "An error occurred during registration"
+      }
+    }
+  },
+  "home": {
+    "tagline": "Learn business with AI",
+    "courses": {
+      "title": "📚 Available courses",
+      "subtitle": "Choose a course and start learning",
+      "lessons": "{{count}} lessons",
+      "hours": "~{{count}}h"
+    },
+    "business": {
+      "title": "🏢 For your business",
+      "subtitle": "Available soon",
+      "teams": {
+        "title": "Teams",
+        "description": "Manage your entire team's learning"
+      },
+      "reports": {
+        "title": "Reports",
+        "description": "Track team progress and statistics"
+      },
+      "customCourses": {
+        "title": "Custom courses",
+        "description": "Create dedicated materials for your company"
+      },
+      "aiMentor": {
+        "title": "AI Mentor",
+        "description": "Personal AI assistant for every employee"
+      },
+      "underConstruction": "Business features are under construction"
+    },
+    "errors": {
+      "loadingCourses": "Loading courses...",
+      "fetchFailed": "Failed to fetch courses",
+      "genericError": "An error occurred while loading courses"
+    }
+  },
+  "tabs": {
+    "home": "Home",
+    "learn": "Learn",
+    "practice": "Practice",
+    "profile": "Profile"
+  },
+  "profile": {
+    "joinedDate": "Joined {{date}}",
+    "stats": {
+      "streak": "Day streak",
+      "xp": "Total XP",
+      "energy": "Energy",
+      "achievements": "Achievements"
+    },
+    "achievements": {
+      "title": "Achievements ({{count}})",
+      "firstStep": {
+        "title": "First step",
+        "description": "Complete your first lesson"
+      },
+      "hotStart": {
+        "title": "Hot start",
+        "description": "3 day streak"
+      },
+      "rocket": {
+        "title": "Rocket",
+        "description": "Complete 10 lessons"
+      }
+    },
+    "progress": {
+      "title": "Learning progress",
+      "lessonsCompleted": "Lessons completed",
+      "learningTime": "Learning time",
+      "accuracy": "Accuracy",
+      "minutes": "{{count}} min"
+    },
+    "language": {
+      "title": "App language",
+      "change": "Change language"
+    }
+  },
+  "lesson": {
+    "continue": "Continue",
+    "check": "Check",
+    "gotIt": "Got it!",
+    "next": "Next",
+    "complete": "Complete",
+    "success": {
+      "title": "Great job!",
+      "lessonComplete": "Lesson complete",
+      "xpEarned": "You earned {{xp}} XP",
+      "continue": "Continue"
+    },
+    "types": {
+      "multipleChoice": "Select the correct answer",
+      "fillBlank": "Fill in the blank",
+      "trueFalse": "True or false?",
+      "matchPairs": "Match the pairs",
+      "dragSequence": "Put in order",
+      "translate": "Translate"
+    }
+  },
+  "onboarding": {
+    "skip": "Skip",
+    "next": "Next",
+    "back": "Back",
+    "getStarted": "Get Started",
+    "hasAccount": "Already have an account? ",
+    "login": "Log in",
+    "slide1": {
+      "title": "Welcome to Aisello!",
+      "description": "AI-powered platform that helps grow your business with advanced artificial intelligence tools"
+    },
+    "slide2": {
+      "title": "AI Automation",
+      "description": "Generate automatic product descriptions, LinkedIn posts and other marketing content in seconds"
+    },
+    "slide3": {
+      "title": "Smart Tools",
+      "description": "Use ready-made AI solutions tailored to your business needs - from ContentAI to SalesAI"
+    },
+    "slide4": {
+      "title": "Courses & Development",
+      "description": "Develop your AI skills through practical courses and training adapted to your learning pace"
+    }
+  }
+}
+

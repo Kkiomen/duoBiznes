@@ -1,22 +1,22 @@
-import { useState } from 'react';
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  SafeAreaView,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native';
-import { useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Image } from 'expo-image';
 import { ThemedText } from '@/components/themed-text';
 import { DuolingoButton } from '@/components/ui/duolingo-button';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import {
+    KeyboardAvoidingView,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
+    View
+} from 'react-native';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -27,10 +27,11 @@ export default function LoginScreen() {
   const { login } = useAuth();
   const router = useRouter();
   const colorScheme = useColorScheme() ?? 'light';
+  const { t } = useLanguage();
 
   const handleLogin = async () => {
     if (!email || !password) {
-      setError('Wprowadź email i hasło');
+      setError(t('auth.login.errors.fillFields'));
       return;
     }
 
@@ -45,7 +46,7 @@ export default function LoginScreen() {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError('Wystąpił błąd podczas logowania');
+        setError(t('auth.login.errors.loginFailed'));
       }
     } finally {
       setIsLoading(false);
@@ -54,7 +55,7 @@ export default function LoginScreen() {
 
   const handleGoogleLogin = async () => {
     // TODO: Implement Google Sign-In flow
-    setError('Logowanie przez Google będzie wkrótce dostępne');
+    setError(t('auth.login.errors.googleSoon'));
   };
 
   return (
@@ -79,20 +80,20 @@ export default function LoginScreen() {
                 style={styles.logo}
                 contentFit="contain"
               />
-              <ThemedText style={styles.title}>Witaj z powrotem!</ThemedText>
-              <ThemedText style={styles.subtitle}>Zaloguj się, aby kontynuować naukę</ThemedText>
+              <ThemedText style={styles.title}>{t('auth.login.title')}</ThemedText>
+              <ThemedText style={styles.subtitle}>{t('auth.login.subtitle')}</ThemedText>
             </View>
 
             {/* Login Form */}
             <View style={styles.form}>
               <View style={styles.inputGroup}>
-                <ThemedText style={styles.label}>Email</ThemedText>
+                <ThemedText style={styles.label}>{t('auth.login.email')}</ThemedText>
                 <TextInput
                   style={[
                     styles.input,
                     { backgroundColor: colorScheme === 'dark' ? '#1a1f35' : '#fff', color: colorScheme === 'dark' ? '#fff' : '#000' },
                   ]}
-                  placeholder="twoj@email.com"
+                  placeholder={t('auth.login.emailPlaceholder')}
                   placeholderTextColor={colorScheme === 'dark' ? '#6B7280' : '#9CA3AF'}
                   value={email}
                   onChangeText={setEmail}
@@ -104,13 +105,13 @@ export default function LoginScreen() {
               </View>
 
               <View style={styles.inputGroup}>
-                <ThemedText style={styles.label}>Hasło</ThemedText>
+                <ThemedText style={styles.label}>{t('auth.login.password')}</ThemedText>
                 <TextInput
                   style={[
                     styles.input,
                     { backgroundColor: colorScheme === 'dark' ? '#1a1f35' : '#fff', color: colorScheme === 'dark' ? '#fff' : '#000' },
                   ]}
-                  placeholder="••••••••"
+                  placeholder={t('auth.login.passwordPlaceholder')}
                   placeholderTextColor={colorScheme === 'dark' ? '#6B7280' : '#9CA3AF'}
                   value={password}
                   onChangeText={setPassword}
@@ -128,7 +129,7 @@ export default function LoginScreen() {
               )}
 
               <DuolingoButton
-                title={isLoading ? 'Logowanie...' : 'Zaloguj się'}
+                title={isLoading ? t('auth.login.loggingIn') : t('auth.login.loginButton')}
                 onPress={handleLogin}
                 disabled={isLoading || !email || !password}
                 variant={isLoading || !email || !password ? 'disabled' : 'primary'}
@@ -137,7 +138,7 @@ export default function LoginScreen() {
               {/* Divider */}
               <View style={styles.divider}>
                 <View style={[styles.dividerLine, { backgroundColor: colorScheme === 'dark' ? '#374151' : '#E5E7EB' }]} />
-                <ThemedText style={styles.dividerText}>lub</ThemedText>
+                <ThemedText style={styles.dividerText}>{t('common.or')}</ThemedText>
                 <View style={[styles.dividerLine, { backgroundColor: colorScheme === 'dark' ? '#374151' : '#E5E7EB' }]} />
               </View>
 
@@ -147,14 +148,14 @@ export default function LoginScreen() {
                 onPress={handleGoogleLogin}
                 disabled={isLoading}
               >
-                <ThemedText style={styles.googleButtonText}>🌐 Zaloguj się przez Google</ThemedText>
+                <ThemedText style={styles.googleButtonText}>🌐 {t('auth.login.googleLogin')}</ThemedText>
               </TouchableOpacity>
 
               {/* Register Link */}
               <View style={styles.registerLink}>
-                <ThemedText style={styles.registerText}>Nie masz konta? </ThemedText>
+                <ThemedText style={styles.registerText}>{t('auth.login.noAccount')}</ThemedText>
                 <TouchableOpacity onPress={() => router.push('/(auth)/register')} disabled={isLoading}>
-                  <ThemedText style={styles.registerButton}>Zarejestruj się</ThemedText>
+                  <ThemedText style={styles.registerButton}>{t('auth.login.registerLink')}</ThemedText>
                 </TouchableOpacity>
               </View>
             </View>

@@ -1,0 +1,198 @@
+{
+  "common": {
+    "loading": "Ładowanie...",
+    "loadingCourse": "Ładowanie kursu...",
+    "loadingHint": "To zajmie tylko chwilę...",
+    "error": "Błąd",
+    "errorTitle": "Coś poszło nie tak",
+    "errorHint": "Sprawdź czy backend działa na localhost:8000",
+    "retry": "Spróbuj ponownie",
+    "close": "Zamknij",
+    "cancel": "Anuluj",
+    "continue": "Kontynuuj",
+    "save": "Zapisz",
+    "comingSoon": "Wkrótce",
+    "or": "lub"
+  },
+  "auth": {
+    "login": {
+      "title": "Witaj z powrotem!",
+      "subtitle": "Zaloguj się, aby kontynuować naukę",
+      "email": "Email",
+      "password": "Hasło",
+      "emailPlaceholder": "twoj@email.com",
+      "passwordPlaceholder": "••••••••",
+      "loginButton": "Zaloguj się",
+      "loggingIn": "Logowanie...",
+      "googleLogin": "Zaloguj się przez Google",
+      "noAccount": "Nie masz konta? ",
+      "registerLink": "Zarejestruj się",
+      "errors": {
+        "fillFields": "Wprowadź email i hasło",
+        "loginFailed": "Wystąpił błąd podczas logowania",
+        "googleSoon": "Logowanie przez Google będzie wkrótce dostępne"
+      }
+    },
+    "register": {
+      "title": "Dołącz do nas!",
+      "subtitle": "Rozpocznij swoją przygodę z nauką",
+      "step0": {
+        "title": "Hej!",
+        "subtitle": "Powiedz nam jak się nazywasz",
+        "firstName": "Imię",
+        "lastName": "Nazwisko",
+        "firstNamePlaceholder": "Jan",
+        "lastNamePlaceholder": "Kowalski",
+        "hint": "Możesz pominąć"
+      },
+      "step1": {
+        "title": "Świetnie, {{name}}!",
+        "subtitle": "Jaki jest Twój adres email?",
+        "email": "Email",
+        "emailPlaceholder": "twoj@email.com"
+      },
+      "step2": {
+        "title": "Ostatni krok!",
+        "subtitle": "Wymyśl bezpieczne hasło",
+        "password": "Hasło",
+        "confirmPassword": "Potwierdź hasło",
+        "passwordPlaceholder": "••••••••",
+        "hint": "Minimum 8 znaków"
+      },
+      "next": "Dalej",
+      "back": "← Wstecz",
+      "createAccount": "Utwórz konto",
+      "creating": "Tworzenie...",
+      "hasAccount": "Masz już konto? ",
+      "loginLink": "Zaloguj się",
+      "errors": {
+        "fillFields": "Wypełnij wszystkie wymagane pola",
+        "passwordTooShort": "Hasło musi mieć minimum 8 znaków",
+        "passwordMismatch": "Hasła nie są identyczne",
+        "registerFailed": "Wystąpił błąd podczas rejestracji"
+      }
+    }
+  },
+  "home": {
+    "tagline": "Ucz się biznesu z AI",
+    "courses": {
+      "title": "📚 Dostępne kursy",
+      "subtitle": "Wybierz kurs i rozpocznij naukę",
+      "lessons": "{{count}} lekcji",
+      "hours": "~{{count}}h"
+    },
+    "business": {
+      "title": "🏢 Dla Twojej firmy",
+      "subtitle": "Dostępne wkrótce",
+      "teams": {
+        "title": "Zespoły",
+        "description": "Zarządzaj uczeniem się całego zespołu"
+      },
+      "reports": {
+        "title": "Raporty",
+        "description": "Śledź postępy i statystyki zespołu"
+      },
+      "customCourses": {
+        "title": "Własne kursy",
+        "description": "Twórz dedykowane materiały dla firmy"
+      },
+      "aiMentor": {
+        "title": "AI Mentor",
+        "description": "Osobisty asystent AI dla każdego pracownika"
+      },
+      "underConstruction": "Funkcjonalności dla firm są w budowie"
+    },
+    "errors": {
+      "loadingCourses": "Ładowanie kursów...",
+      "fetchFailed": "Nie udało się pobrać kursów",
+      "genericError": "Wystąpił błąd podczas ładowania kursów"
+    }
+  },
+  "tabs": {
+    "home": "Home",
+    "learn": "Nauka",
+    "practice": "Ćwiczenia",
+    "profile": "Profil"
+  },
+  "profile": {
+    "joinedDate": "Dołączył {{date}}",
+    "stats": {
+      "streak": "Dni z rzędu",
+      "xp": "Całkowite XP",
+      "energy": "Energia",
+      "achievements": "Osiągnięcia"
+    },
+    "achievements": {
+      "title": "Osiągnięcia ({{count}})",
+      "firstStep": {
+        "title": "Pierwszy krok",
+        "description": "Ukończ pierwszą lekcję"
+      },
+      "hotStart": {
+        "title": "Gorący start",
+        "description": "3 dni z rzędu"
+      },
+      "rocket": {
+        "title": "Rakieta",
+        "description": "Ukończ 10 lekcji"
+      }
+    },
+    "progress": {
+      "title": "Postęp nauki",
+      "lessonsCompleted": "Ukończone lekcje",
+      "learningTime": "Czas nauki",
+      "accuracy": "Trafność",
+      "minutes": "{{count}} min"
+    },
+    "language": {
+      "title": "Język aplikacji",
+      "change": "Zmień język"
+    }
+  },
+  "lesson": {
+    "continue": "Kontynuuj",
+    "check": "Sprawdź",
+    "gotIt": "Rozumiem!",
+    "next": "Dalej",
+    "complete": "Ukończ",
+    "success": {
+      "title": "Świetna robota!",
+      "lessonComplete": "Lekcja ukończona",
+      "xpEarned": "Zdobyłeś {{xp}} XP",
+      "continue": "Kontynuuj"
+    },
+    "types": {
+      "multipleChoice": "Wybierz poprawną odpowiedź",
+      "fillBlank": "Uzupełnij lukę",
+      "trueFalse": "Prawda czy fałsz?",
+      "matchPairs": "Dopasuj pary",
+      "dragSequence": "Ułóż w kolejności",
+      "translate": "Przetłumacz"
+    }
+  },
+  "onboarding": {
+    "skip": "Pomiń",
+    "next": "Dalej",
+    "back": "Wstecz",
+    "getStarted": "Rozpocznij",
+    "hasAccount": "Masz już konto? ",
+    "login": "Zaloguj się",
+    "slide1": {
+      "title": "Witaj w Aisello!",
+      "description": "Platforma AI, która pomaga rozwijać Twoją firmę dzięki zaawansowanym narzędziom sztucznej inteligencji"
+    },
+    "slide2": {
+      "title": "Automatyzacja z AI",
+      "description": "Generuj automatyczne opisy produktów, posty na LinkedIn i inne treści marketingowe w kilka sekund"
+    },
+    "slide3": {
+      "title": "Inteligentne narzędzia",
+      "description": "Korzystaj z gotowych rozwiązań AI dostosowanych do potrzeb Twojej firmy - odContentAI po SalesAI"
+    },
+    "slide4": {
+      "title": "Kursy i rozwój",
+      "description": "Rozwijaj umiejętności AI poprzez praktyczne kursy i szkolenia dostosowane do Twojego tempa nauki"
+    }
+  }
+}
+
