@@ -1,0 +1,34 @@
+{
+  "user": {
+    "id": "user-1",
+    "name": "Użytkownik",
+    "avatar": "👤",
+    "joinDate": "2025-01-15T10:00:00.000Z"
+  },
+  "stats": {
+    "hearts": 5,
+    "maxHearts": 5,
+    "xp": 0,
+    "dailyXP": 0,
+    "streak": 0,
+    "longestStreak": 0,
+    "level": 1,
+    "tier": "bronze",
+    "lastActiveDate": "2025-01-15T10:00:00.000Z"
+  },
+  "progress": {
+    "currentCheckpoint": "n8n-basics-1",
+    "completedLessons": [],
+    "achievements": [],
+    "unlockedModules": ["n8n-basics"]
+  },
+  "learningStats": {
+    "totalTimeMinutes": 0,
+    "totalLessonsCompleted": 0,
+    "averageAccuracy": 0,
+    "bestStreak": 0,
+    "totalXPEarned": 0,
+    "lessonsCompletedToday": 0,
+    "lastLessonDate": null
+  }
+}

@@ -44,6 +44,15 @@ export default function TabLayout() {
         },
       }}>
       <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Home',
+          tabBarIcon: ({ focused }) => (
+            <EmojiIcon emoji="🏠" focused={focused} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="nowe"
         options={{
           title: 'Nauka',
@@ -58,15 +67,6 @@ export default function TabLayout() {
           title: 'Ćwiczenia',
           tabBarIcon: ({ focused }) => (
             <EmojiIcon emoji="💪" focused={focused} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Ranking',
-          tabBarIcon: ({ focused }) => (
-            <EmojiIcon emoji="🏆" focused={focused} />
           ),
         }}
       />
