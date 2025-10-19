@@ -1,9 +1,12 @@
 import { ThemedText } from '@/components/themed-text';
+import { useCourse } from '@/contexts/CourseContext';
+import { LoadingScreen } from '@/components/ui/loading-screen';
+import { ErrorScreen } from '@/components/ui/error-screen';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring } from 'react-native-reanimated';
 import Svg, { Path } from 'react-native-svg';
 
@@ -18,6 +21,7 @@ interface NodeData {
   state: NodeState;
   stars: number;
   xp: number;
+  moduleId: string; // Dodane - z API
 }
 
 // Komponent pojedynczego węzła
@@ -179,58 +183,61 @@ function CharacterNode({ node, onPress, offsetDirection }: {
 
 export default function NoweScreen() {
   const router = useRouter();
-  const [nodes] = useState<NodeData[]>([
-    { id: 1, type: 'lesson', icon: '🤖', title: 'Czym jest n8n?', state: 'current', stars: 0, xp: 40 },
-    { id: 2, type: 'lesson', icon: '⚙️', title: 'Podstawy Workflow', state: 'available', stars: 0, xp: 45 },
-    { id: 3, type: 'character', icon: '👩‍💼', title: 'Historia Ani', state: 'available', stars: 3, xp: 30 },
-    { id: 4, type: 'lesson', icon: '🔗', title: "Node'y w n8n", state: 'available', stars: 0, xp: 60 },
-    { id: 5, type: 'practice', icon: '🎯', title: 'Dopasuj node\'y', state: 'available', stars: 0, xp: 40 },
-    { id: 6, type: 'lesson', icon: '🪝', title: 'Webhook i Triggery', state: 'available', stars: 0, xp: 50 },
-    { id: 7, type: 'practice', icon: '🎮', title: 'Zbuduj workflow', state: 'locked', stars: 0, xp: 60 },
-    { id: 8, type: 'practice', icon: '❓', title: 'Node IF', state: 'locked', stars: 0, xp: 50 },
-    { id: 9, type: 'lesson', icon: '📊', title: 'Praca z danymi', state: 'available', stars: 0, xp: 60 },
-    { id: 10, type: 'character', icon: '💡', title: 'Wskazówki', state: 'locked', stars: 0, xp: 20 },
-    { id: 11, type: 'lesson', icon: '🚀', title: 'Pierwszy workflow', state: 'available', stars: 0, xp: 105 },
-    { id: 12, type: 'practice', icon: '✍️', title: 'Ćwicz składnię', state: 'locked', stars: 0, xp: 50 },
-    { id: 13, type: 'review', icon: '🏆', title: 'Finałowe wyzwanie', state: 'locked', stars: 0, xp: 105 },
-  ]);
+  const { course, loading, error, retry, initialLoadComplete, refresh } = useCourse();
+  const [refreshing, setRefreshing] = useState(false);
 
-  const [moduleProgress] = useState({ completed: 0, total: 13 });
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refresh();
+    setRefreshing(false);
+  };
 
-  // Mapowanie węzłów na moduleId lekcji
-  const getModuleIdForNode = (nodeId: number): string => {
-    const lessonMapping: Record<number, string> = {
-      1: 'n8n-lesson-1',   // Czym jest n8n?
-      2: 'n8n-lesson-2',   // Podstawy Workflow
-      3: 'n8n-lesson-1',   // Historia Ani (w lesson-1)
-      4: 'n8n-lesson-3',   // Node'y w n8n
-      5: 'n8n-lesson-3',   // Dopasuj node'y (practice w lesson-3)
-      6: 'n8n-lesson-4',   // Webhook i Triggery
-      7: 'n8n-lesson-6',   // Zbuduj workflow (practice w lesson-6)
-      8: 'n8n-lesson-3',   // Node IF (w lesson-3)
-      9: 'n8n-lesson-5',   // Praca z danymi
-      10: 'n8n-lesson-5',  // Wskazówki (tips w lesson-5)
-      11: 'n8n-lesson-6',  // Pierwszy workflow
-      12: 'n8n-lesson-5',  // Ćwicz składnię (practice w lesson-5)
-      13: 'n8n-lesson-6',  // Finałowe wyzwanie
-    };
-    return lessonMapping[nodeId] || 'n8n-lesson-1';
+  // Loading state
+  if (loading && !initialLoadComplete) {
+    return <LoadingScreen message="Ładowanie ścieżki nauki..." />;
+  }
+
+  // Error state
+  if (error && !course) {
+    return <ErrorScreen error={error} onRetry={retry} />;
+  }
+
+  // Brak danych
+  if (!course) {
+    return <LoadingScreen message="Ładowanie..." />;
+  }
+
+  // Konwersja danych z API na format NodeData - wszystko z API, zero hardcoded!
+  const firstChapter = course.chapters[0];
+  const nodes: NodeData[] = firstChapter ? firstChapter.lessons.map((lesson, index) => ({
+    id: lesson.id,
+    type: 'lesson' as NodeType,
+    icon: lesson.character,
+    title: lesson.moduleTitle,
+    state: (index === 0 ? 'current' : index < 4 ? 'available' : 'locked') as NodeState,
+    stars: 0,
+    xp: lesson.totalXP,
+    moduleId: lesson.moduleId, // Bezpośrednio z API!
+  })) : [];
+
+  const moduleProgress = {
+    completed: 0,
+    total: nodes.length
   };
 
   const handleNodePress = (node: NodeData) => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    const moduleId = getModuleIdForNode(node.id);
 
     if (node.state === 'locked') {
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
       // Węzeł zablokowany - shake animation już wykonana w komponencie
       return;
     }
-    
+
     // Bezpośrednie uruchomienie lekcji (jak w Duolingo)
     if (node.state === 'current' || node.state === 'available' || node.state === 'completed') {
       void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-      router.push(`/lesson-n8n?moduleId=${moduleId}`);
+      router.push(`/lesson-n8n?moduleId=${node.moduleId}`); // Bezpośrednio z node!
     }
   };
 
@@ -317,6 +324,14 @@ export default function NoweScreen() {
       style={styles.scrollView}
       contentContainerStyle={styles.contentContainer}
       showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor="#1cb0f6"
+          colors={['#1cb0f6']}
+        />
+      }
     >
       {/* Górna belka ze statystykami */}
       <View style={styles.topStatusBar}>
@@ -344,7 +359,7 @@ export default function NoweScreen() {
       </View>
 
       {/* Czerwona karta modułu z postępem */}
-      <Pressable onPress={() => Alert.alert('Sekcja 1', 'Podstawy n8n - poznaj automatyzację workflow')}>
+      <Pressable onPress={() => Alert.alert(firstChapter?.title || 'Sekcja 1', firstChapter?.description || 'Poznaj automatyzację workflow')}>
         <View style={styles.moduleCardContainer}>
           <LinearGradient
             colors={['#FF4B4B', '#E03C3C']}
@@ -354,8 +369,8 @@ export default function NoweScreen() {
           >
             <View style={styles.moduleCardContent}>
               <View style={styles.moduleTextContainer}>
-                <ThemedText style={styles.moduleHeader}>SEKCJA 1</ThemedText>
-                <ThemedText style={styles.moduleTitle}>Podstawy n8n</ThemedText>
+                <ThemedText style={styles.moduleHeader}>ROZDZIAŁ 1</ThemedText>
+                <ThemedText style={styles.moduleTitle}>{firstChapter?.title || 'Podstawy n8n'}</ThemedText>
                 <View style={styles.moduleProgress}>
                   <View style={styles.progressBarBg}>
                     <View style={[styles.progressBarFill, { width: `${(moduleProgress.completed / moduleProgress.total) * 100}%` }]} />
@@ -437,8 +452,9 @@ export default function NoweScreen() {
             void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
             // Znajdź pierwszy dostępny lub current node
             const currentNode = nodes.find(n => n.state === 'current' || n.state === 'available');
-            const moduleId = currentNode ? getModuleIdForNode(currentNode.id) : 'n8n-lesson-1';
-            router.push(`/lesson-n8n?moduleId=${moduleId}`);
+            if (currentNode) {
+              router.push(`/lesson-n8n?moduleId=${currentNode.moduleId}`); // Bezpośrednio z node!
+            }
           }}
           style={({ pressed }) => [
             styles.actionButton,
@@ -452,7 +468,7 @@ export default function NoweScreen() {
             style={styles.actionGradient}
           >
             <ThemedText style={styles.actionText}>KONTYNUUJ</ThemedText>
-            <ThemedText style={styles.actionSubtext}>Podstawy n8n • 360 XP</ThemedText>
+            <ThemedText style={styles.actionSubtext}>{firstChapter?.title || 'Podstawy n8n'} • {firstChapter?.lessons.reduce((sum, l) => sum + l.totalXP, 0) || 0} XP</ThemedText>
           </LinearGradient>
         </Pressable>
       </View>

@@ -5,76 +5,52 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { DuolingoButton } from '@/components/ui/duolingo-button';
 import { LessonHeader } from '@/components/ui/lesson-header';
+import { LoadingScreen } from '@/components/ui/loading-screen';
+import { ErrorScreen } from '@/components/ui/error-screen';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useCourse } from '@/contexts/CourseContext';
+import { useLocalSearchParams, router } from 'expo-router';
 import { useState } from 'react';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
-
-type LessonType = 'multiple-choice' | 'translate' | 'fill-blank';
-
-interface LessonStep {
-  type: LessonType;
-  data: any;
-  correctAnswer: number | string;
-}
-
-const lessonSteps: LessonStep[] = [
-  {
-    type: 'multiple-choice',
-    data: {
-      question: 'Co oznacza skrót LLM?',
-      options: [
-        { text: 'Large Language Model', icon: '🤖' },
-        { text: 'Long Logic Machine', icon: '⚙️' },
-        { text: 'Latent Linear Map', icon: '📊' },
-        { text: 'Language Learning Method', icon: '📚' },
-      ],
-    },
-    correctAnswer: 0,
-  },
-  {
-    type: 'translate',
-    data: {
-      sentence: 'Token to fragment tekstu przetwarzany przez model AI',
-      instruction: 'Wybierz prawidłowe tłumaczenie',
-      options: [
-        'A token is a piece of text',
-        'A token is a complete sentence',
-        'A token is a file',
-      ],
-    },
-    correctAnswer: 0,
-  },
-  {
-    type: 'fill-blank',
-    data: {
-      sentence: 'GPT-4 jest przykładem ___ modelu językowego.',
-      placeholder: 'Wpisz odpowiedź...',
-      correctAnswer: 'dużego',
-    },
-    correctAnswer: 'dużego',
-  },
-  {
-    type: 'multiple-choice',
-    data: {
-      question: 'Który z tych jest modelem AI od OpenAI?',
-      options: [
-        { text: 'GPT', icon: '🧠' },
-        { text: 'BERT', icon: '📚' },
-        { text: 'T5', icon: '🔤' },
-        { text: 'LSTM', icon: '🔄' },
-      ],
-    },
-    correctAnswer: 0,
-  },
-];
+import type { LessonStep, MultipleChoiceContent, TranslateContent, FillBlankContent } from '@/types/course';
 
 export default function LessonScreen() {
+  const colorScheme = useColorScheme() ?? 'light';
+  const { moduleId } = useLocalSearchParams<{ moduleId: string }>();
+  const { getModuleById, course } = useCourse();
+
   const [step, setStep] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [textAnswer, setTextAnswer] = useState('');
   const [showResult, setShowResult] = useState(false);
-  const colorScheme = useColorScheme() ?? 'light';
 
+  // Pobierz moduł z kontekstu
+  const module = moduleId ? getModuleById(moduleId) : null;
+
+  // Jeśli nie ma modułu, pokaż błąd
+  if (!moduleId) {
+    return (
+      <ErrorScreen
+        error="Nie podano ID lekcji"
+        onRetry={() => router.back()}
+      />
+    );
+  }
+
+  if (!course) {
+    return <LoadingScreen message="Ładowanie kursu..." />;
+  }
+
+  if (!module) {
+    return (
+      <ErrorScreen
+        error={`Nie znaleziono lekcji o ID: ${moduleId}`}
+        onRetry={() => router.back()}
+      />
+    );
+  }
+
+  const lessonSteps = module.lessons;
   const totalSteps = lessonSteps.length;
   const progress = step / totalSteps;
   const currentLesson = lessonSteps[step];
@@ -101,14 +77,91 @@ export default function LessonScreen() {
     setShowResult(false);
     setSelected(null);
     setTextAnswer('');
-    setStep((s) => s + 1);
+
+    if (step < totalSteps - 1) {
+      setStep((s) => s + 1);
+    } else {
+      // Koniec lekcji - wróć do ścieżki
+      router.back();
+    }
   };
 
-  const isCorrect = () => {
-    if (currentLesson.type === 'fill-blank') {
-      return textAnswer.trim().toLowerCase() === String(currentLesson.correctAnswer).toLowerCase();
+  const isCorrect = (): boolean => {
+    if (currentLesson.type === 'multiple-choice') {
+      const content = currentLesson.content as MultipleChoiceContent;
+      return selected === content.correctAnswer;
+    } else if (currentLesson.type === 'translate') {
+      const content = currentLesson.content as TranslateContent;
+      return selected === (content.correctAnswer ?? 0);
+    } else if (currentLesson.type === 'fill-blank') {
+      const content = currentLesson.content as FillBlankContent;
+      return textAnswer.trim().toLowerCase() === content.correctAnswer.toLowerCase();
     }
-    return selected === currentLesson.correctAnswer;
+    return false;
+  };
+
+  const renderLessonContent = (lesson: LessonStep) => {
+    switch (lesson.type) {
+      case 'multiple-choice': {
+        const content = lesson.content as MultipleChoiceContent;
+        return (
+          <MultipleChoice
+            question={content.question}
+            options={content.options}
+            selected={selected}
+            showResult={showResult}
+            correctIndex={content.correctAnswer}
+            onSelect={handleSelect}
+          />
+        );
+      }
+
+      case 'translate': {
+        const content = lesson.content as TranslateContent;
+        return (
+          <Translate
+            sentence={content.sentence}
+            instruction={content.instruction}
+            options={content.options}
+            selected={selected}
+            showResult={showResult}
+            correctIndex={content.correctAnswer ?? 0}
+            onSelect={handleSelect}
+          />
+        );
+      }
+
+      case 'fill-blank': {
+        const content = lesson.content as FillBlankContent;
+        return (
+          <FillBlank
+            sentence={content.sentence}
+            placeholder={content.placeholder}
+            correctAnswer={content.correctAnswer}
+            showResult={showResult}
+            onAnswer={handleTextAnswer}
+          />
+        );
+      }
+
+      // Dla innych typów lekcji (info, story, etc.) można dodać później
+      default:
+        return (
+          <View>
+            <ThemedText style={styles.notImplemented}>
+              Typ lekcji "{lesson.type}" nie jest jeszcze zaimplementowany
+            </ThemedText>
+            <ThemedText style={styles.notImplementedHint}>
+              Kliknij "Dalej" aby przejść do następnej lekcji
+            </ThemedText>
+          </View>
+        );
+    }
+  };
+
+  // Sprawdź czy aktualny lesson wymaga interakcji
+  const requiresAnswer = (lesson: LessonStep): boolean => {
+    return ['multiple-choice', 'translate', 'fill-blank', 'true-false', 'match-pairs', 'drag-sequence', 'node-picker', 'swipe-cards'].includes(lesson.type);
   };
 
   return (
@@ -121,45 +174,17 @@ export default function LessonScreen() {
         <View style={styles.content}>
           {step < totalSteps ? (
             <View style={styles.questionContainer}>
-              {currentLesson.type === 'multiple-choice' && (
-                <MultipleChoice
-                  question={currentLesson.data.question}
-                  options={currentLesson.data.options}
-                  selected={selected}
-                  showResult={showResult}
-                  correctIndex={currentLesson.correctAnswer as number}
-                  onSelect={handleSelect}
-                />
-              )}
-
-              {currentLesson.type === 'translate' && (
-                <Translate
-                  sentence={currentLesson.data.sentence}
-                  instruction={currentLesson.data.instruction}
-                  options={currentLesson.data.options}
-                  selected={selected}
-                  showResult={showResult}
-                  correctIndex={currentLesson.correctAnswer as number}
-                  onSelect={handleSelect}
-                />
-              )}
-
-              {currentLesson.type === 'fill-blank' && (
-                <FillBlank
-                  sentence={currentLesson.data.sentence}
-                  placeholder={currentLesson.data.placeholder}
-                  correctAnswer={currentLesson.data.correctAnswer}
-                  showResult={showResult}
-                  onAnswer={handleTextAnswer}
-                />
-              )}
+              {renderLessonContent(currentLesson)}
             </View>
           ) : (
             <View style={styles.successContainer}>
               <ThemedText style={styles.successIcon}>🎉</ThemedText>
               <ThemedText style={styles.successTitle}>Świetnie!</ThemedText>
               <ThemedText style={styles.successText}>
-                Ukończyłeś lekcję podstaw AI
+                Ukończyłeś lekcję: {module.moduleTitle}
+              </ThemedText>
+              <ThemedText style={styles.xpEarned}>
+                +{module.totalXP} XP
               </ThemedText>
             </View>
           )}
@@ -167,16 +192,27 @@ export default function LessonScreen() {
 
         {/* Bottom Button */}
         <View style={styles.footer}>
-          {step < totalSteps && !showResult ? (
+          {step < totalSteps && !showResult && requiresAnswer(currentLesson) ? (
             <DuolingoButton
               title="Sprawdź"
               onPress={handleCheck}
-              disabled={currentLesson.type === 'fill-blank' ? !textAnswer.trim() : selected === null}
+              disabled={
+                currentLesson.type === 'fill-blank'
+                  ? !textAnswer.trim()
+                  : selected === null
+              }
               variant={
-                currentLesson.type === 'fill-blank' 
+                currentLesson.type === 'fill-blank'
                   ? (!textAnswer.trim() ? 'disabled' : 'primary')
                   : (selected === null ? 'disabled' : 'primary')
               }
+            />
+          ) : step < totalSteps && !showResult && !requiresAnswer(currentLesson) ? (
+            // Dla lekcji bez interakcji (info, story, etc.)
+            <DuolingoButton
+              title="Dalej"
+              onPress={handleContinue}
+              variant="primary"
             />
           ) : step < totalSteps && showResult ? (
             <View style={styles.resultFooter}>
@@ -188,11 +224,7 @@ export default function LessonScreen() {
                   styles.resultText,
                   { color: isCorrect() ? '#58a700' : '#ea2b2b' }
                 ]}>
-                  {isCorrect() ? '✓ Świetnie!' : `✗ Poprawna odpowiedź: ${
-                    currentLesson.type === 'fill-blank' 
-                      ? currentLesson.correctAnswer 
-                      : currentLesson.data.options[currentLesson.correctAnswer as number].text
-                  }`}
+                  {isCorrect() ? `✓ Świetnie! +${currentLesson.xp ?? 10} XP` : '✗ Spróbuj jeszcze raz'}
                 </ThemedText>
               </View>
               <DuolingoButton
@@ -240,6 +272,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#777',
   },
+  xpEarned: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#58cc02',
+  },
   footer: {
     padding: 20,
     paddingBottom: 32,
@@ -254,7 +291,18 @@ const styles = StyleSheet.create({
   resultText: {
     fontSize: 16,
     fontWeight: '700',
+    textAlign: 'center',
+  },
+  notImplemented: {
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+    color: '#777',
+    marginBottom: 12,
+  },
+  notImplementedHint: {
+    fontSize: 14,
+    textAlign: 'center',
+    color: '#999',
   },
 });
-
-

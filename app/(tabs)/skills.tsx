@@ -1,21 +1,60 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { SkillNode } from '@/components/ui/skill-node';
+import { LoadingScreen } from '@/components/ui/loading-screen';
+import { ErrorScreen } from '@/components/ui/error-screen';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useCourse } from '@/contexts/CourseContext';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import { useState } from 'react';
+
+// Mapowanie kolorów dla różnych typów lekcji
+const lessonColors = ['green', 'blue', 'purple', 'yellow', 'pink', 'orange'] as const;
+type LessonColor = typeof lessonColors[number];
 
 export default function SkillsScreen() {
   const colorScheme = useColorScheme() ?? 'light';
+  const { course, loading, error, retry, initialLoadComplete, refresh } = useCourse();
   const c = Colors[colorScheme].candy;
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refresh();
+    setRefreshing(false);
+  };
+
+  // Loading state
+  if (loading && !initialLoadComplete) {
+    return <LoadingScreen message="Ładowanie ścieżki nauki..." />;
+  }
+
+  // Error state
+  if (error && !course) {
+    return <ErrorScreen error={error} onRetry={retry} />;
+  }
+
+  // Brak danych
+  if (!course) {
+    return <LoadingScreen message="Ładowanie..." />;
+  }
 
   return (
     <ScrollView
       style={{ backgroundColor: colorScheme === 'dark' ? '#0B1220' : '#F8FAFC' }}
       contentContainerStyle={{ paddingBottom: 100 }}
       showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor={colorScheme === 'dark' ? '#1cb0f6' : '#1cb0f6'}
+          colors={['#1cb0f6']}
+        />
+      }
     >
       <LinearGradient
         colors={colorScheme === 'dark'
@@ -46,289 +85,116 @@ export default function SkillsScreen() {
                 </View>
               </View>
               <ThemedText type="title" style={[styles.title, { color: Colors[colorScheme].text }]}>
-                Ścieżka Nauki
+                {course.title}
               </ThemedText>
             </LinearGradient>
           </View>
 
-          {/* Path - pionowa ścieżka jak w Duolingo */}
+          {/* Path - dynamicznie generowana z danych API */}
           <View style={styles.path}>
-            {/* Unit 1 */}
-            <View style={styles.unit}>
-              <LinearGradient
-                colors={['#58cc02', '#46a302']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.unitHeader}
-              >
-                <View style={styles.unitBadge}>
-                  <ThemedText style={styles.unitTitle}>UNIT 1</ThemedText>
-                </View>
-                <ThemedText style={styles.unitSubtitle}>Podstawy AI</ThemedText>
-                <View style={styles.progressBar}>
-                  <View style={[styles.progressFill, { width: '60%' }]} />
-                </View>
-              </LinearGradient>
-            </View>
-
-            <View style={styles.pathConnector}>
-              <Svg height="50" width="400" style={styles.curvedPath}>
-                <Path
-                  d="M 200 0 C 200 15, 180 30, 160 50"
-                  stroke={colorScheme === 'dark' ? '#374151' : '#cbd5e1'}
-                  strokeWidth="5"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeDasharray="12,8"
-                />
-              </Svg>
-            </View>
-
-            <View style={styles.nodeRow}>
-              <View style={styles.nodeOffset}>
-                <SkillNode
-                  title="Wprowadzenie"
-                  level={1}
-                  icon="🎯"
-                  color="green"
-                  current
-                  progress={3}
-                />
-              </View>
-            </View>
-
-            <View style={styles.pathConnector}>
-              <Svg height="70" width="400" style={styles.curvedPath}>
-                <Path
-                  d="M 200 0 C 200 18, 210 25, 220 35 C 230 45, 240 55, 240 70"
-                  stroke={colorScheme === 'dark' ? '#374151' : '#cbd5e1'}
-                  strokeWidth="5"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeDasharray="12,8"
-                />
-              </Svg>
-            </View>
-
-            <View style={styles.nodeRow}>
-              <View style={[styles.nodeOffset, { marginLeft: 80 }]}>
-                <SkillNode
-                  title="Czym jest AI?"
-                  level={2}
-                  icon="🤖"
-                  color="blue"
-                  completed
-                  progress={2}
-                />
-              </View>
-            </View>
-
-            <View style={styles.pathConnector}>
-              <Svg height="70" width="400" style={styles.curvedPath}>
-                <Path
-                  d="M 240 0 C 240 18, 230 25, 220 35 C 210 45, 200 55, 200 70"
-                  stroke={colorScheme === 'dark' ? '#374151' : '#cbd5e1'}
-                  strokeWidth="5"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeDasharray="12,8"
-                />
-              </Svg>
-            </View>
-
-            <View style={styles.nodeRow}>
-              <View style={styles.nodeOffset}>
-                <SkillNode
-                  title="Modele AI"
-                  level={3}
-                  icon="🧠"
-                  color="purple"
-                  progress={1}
-                />
-              </View>
-            </View>
-
-            <View style={styles.pathConnector}>
-              <Svg height="50" width="400" style={styles.curvedPath}>
-                <Path
-                  d="M 200 0 C 200 12, 200 20, 200 50"
-                  stroke={colorScheme === 'dark' ? '#374151' : '#cbd5e1'}
-                  strokeWidth="5"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeDasharray="12,8"
-                />
-              </Svg>
-            </View>
-
-            {/* Unit 2 */}
-            <View style={styles.unit}>
-              <LinearGradient
-                colors={['#1cb0f6', '#0e8ecb']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.unitHeader}
-              >
-                <View style={styles.unitBadge}>
-                  <ThemedText style={styles.unitTitle}>UNIT 2</ThemedText>
-                </View>
-                <ThemedText style={styles.unitSubtitle}>Praktyka</ThemedText>
-                <View style={styles.progressBar}>
-                  <View style={[styles.progressFill, { width: '0%' }]} />
-                </View>
-              </LinearGradient>
-            </View>
-
-            <View style={styles.pathConnector}>
-              <Svg height="70" width="400" style={styles.curvedPath}>
-                <Path
-                  d="M 200 0 C 200 20, 220 40, 240 70"
-                  stroke={colorScheme === 'dark' ? '#475569' : '#94a3b8'}
-                  strokeWidth="5"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeDasharray="10,6"
-                  opacity={0.5}
-                />
-              </Svg>
-            </View>
-
-            <View style={styles.nodeRow}>
-              <View style={[styles.nodeOffset, { marginLeft: 80 }]}>
-                <SkillNode
-                  title="Prompting"
-                  level={4}
-                  icon="💬"
-                  color="yellow"
-                  locked
-                />
-              </View>
-            </View>
-
-            <View style={styles.pathConnector}>
-              <Svg height="70" width="400" style={styles.curvedPath}>
-                <Path
-                  d="M 240 0 C 240 18, 230 25, 220 35 C 210 45, 200 55, 200 70"
-                  stroke={colorScheme === 'dark' ? '#475569' : '#94a3b8'}
-                  strokeWidth="5"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeDasharray="10,6"
-                  opacity={0.5}
-                />
-              </Svg>
-            </View>
-
-            <View style={styles.nodeRow}>
-              <View style={styles.nodeOffset}>
-                <SkillNode
-                  title="Tokeny"
-                  level={5}
-                  icon="🔤"
-                  color="orange"
-                  locked
-                />
-              </View>
-            </View>
-
-            <View style={styles.pathConnector}>
-              <Svg height="70" width="400" style={styles.curvedPath}>
-                <Path
-                  d="M 200 0 C 200 18, 210 25, 220 35 C 230 45, 240 55, 240 70"
-                  stroke={colorScheme === 'dark' ? '#475569' : '#94a3b8'}
-                  strokeWidth="5"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeDasharray="10,6"
-                  opacity={0.5}
-                />
-              </Svg>
-            </View>
-
-            <View style={styles.nodeRow}>
-              <View style={[styles.nodeOffset, { marginLeft: 80 }]}>
-                <SkillNode
-                  title="RAG"
-                  level={6}
-                  icon="📚"
-                  color="pink"
-                  locked
-                />
-              </View>
-            </View>
-
-            <View style={styles.pathConnector}>
-              <Svg height="70" width="400" style={styles.curvedPath}>
-                <Path
-                  d="M 240 0 C 240 18, 230 25, 220 35 C 210 45, 200 55, 200 70"
-                  stroke={colorScheme === 'dark' ? '#475569' : '#94a3b8'}
-                  strokeWidth="5"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeDasharray="10,6"
-                  opacity={0.5}
-                />
-              </Svg>
-            </View>
-
-            <View style={styles.nodeRow}>
-              <View style={styles.nodeOffset}>
-                <SkillNode
-                  title="Ewaluacja"
-                  level={7}
-                  icon="📊"
-                  color="green"
-                  locked
-                />
-              </View>
-            </View>
-
-            {/* Treasure/Review */}
-            <View style={styles.pathConnector}>
-              <Svg height="50" width="400" style={styles.curvedPath}>
-                <Path
-                  d="M 200 0 C 200 12, 200 20, 200 50"
-                  stroke={colorScheme === 'dark' ? '#374151' : '#cbd5e1'}
-                  strokeWidth="5"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeDasharray="12,8"
-                />
-              </Svg>
-            </View>
-
-            <View style={styles.nodeRow}>
-              <View style={styles.nodeOffset}>
-                <View style={styles.treasureWrapper}>
+            {course.chapters.map((chapter, chapterIndex) => (
+              <View key={chapter.id}>
+                {/* Chapter Header (Unit) */}
+                <View style={styles.unit}>
                   <LinearGradient
-                    colors={['#fbbf24', '#f59e0b']}
-                    style={styles.treasureBg}
+                    colors={getChapterGradient(chapterIndex)}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.unitHeader}
                   >
-                    <SkillNode
-                      title="Podsumowanie"
-                      level={8}
-                      icon="🏆"
-                      color="yellow"
-                      locked
-                    />
+                    <View style={styles.unitBadge}>
+                      <ThemedText style={styles.unitTitle}>
+                        ROZDZIAŁ {chapterIndex + 1}
+                      </ThemedText>
+                    </View>
+                    <ThemedText style={styles.unitSubtitle}>{chapter.title}</ThemedText>
+                    <View style={styles.progressBar}>
+                      <View style={[styles.progressFill, { width: '0%' }]} />
+                    </View>
                   </LinearGradient>
                 </View>
+
+                {/* Lessons/Modules jako SkillNodes */}
+                {chapter.lessons.map((lesson, lessonIndex) => {
+                  const isLeftAligned = lessonIndex % 2 === 0;
+                  const color = lessonColors[lessonIndex % lessonColors.length];
+
+                  return (
+                    <View key={lesson.id}>
+                      {/* Connector */}
+                      {lessonIndex > 0 && (
+                        <View style={styles.pathConnector}>
+                          <Svg height="70" width="400" style={styles.curvedPath}>
+                            <Path
+                              d={isLeftAligned
+                                ? "M 240 0 C 240 18, 230 25, 220 35 C 210 45, 200 55, 200 70"
+                                : "M 200 0 C 200 18, 210 25, 220 35 C 230 45, 240 55, 240 70"}
+                              stroke={colorScheme === 'dark' ? '#374151' : '#cbd5e1'}
+                              strokeWidth="5"
+                              fill="none"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeDasharray="12,8"
+                            />
+                          </Svg>
+                        </View>
+                      )}
+
+                      {/* Skill Node */}
+                      <View style={styles.nodeRow}>
+                        <View style={[styles.nodeOffset, !isLeftAligned && { marginLeft: 80 }]}>
+                          <SkillNode
+                            title={lesson.moduleTitle}
+                            level={lessonIndex + 1}
+                            icon={lesson.character}
+                            color={color}
+                            current={lessonIndex === 0}
+                            locked={lessonIndex > 0}
+                            progress={lessonIndex === 0 ? 1 : 0}
+                            href={`/lesson?moduleId=${lesson.moduleId}` as any}
+                          />
+                        </View>
+                      </View>
+                    </View>
+                  );
+                })}
+
+                {/* Separator between chapters */}
+                {chapterIndex < course.chapters.length - 1 && (
+                  <View style={styles.pathConnector}>
+                    <Svg height="50" width="400" style={styles.curvedPath}>
+                      <Path
+                        d="M 200 0 C 200 12, 200 20, 200 50"
+                        stroke={colorScheme === 'dark' ? '#374151' : '#cbd5e1'}
+                        strokeWidth="5"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeDasharray="12,8"
+                      />
+                    </Svg>
+                  </View>
+                )}
               </View>
-            </View>
+            ))}
           </View>
         </ThemedView>
       </LinearGradient>
     </ScrollView>
   );
+}
+
+// Helper do generowania gradientu dla rozdziału
+function getChapterGradient(index: number): [string, string] {
+  const gradients: [string, string][] = [
+    ['#58cc02', '#46a302'], // green
+    ['#1cb0f6', '#0e8ecb'], // blue
+    ['#8b5cf6', '#7c3aed'], // purple
+    ['#fbbf24', '#f59e0b'], // yellow
+    ['#ec4899', '#db2777'], // pink
+    ['#f97316', '#ea580c'], // orange
+  ];
+  return gradients[index % gradients.length];
 }
 
 const styles = StyleSheet.create({
@@ -413,20 +279,11 @@ const styles = StyleSheet.create({
     width: '100%',
     zIndex: 1,
   },
-  connector: {
-    width: 6,
-    height: 32,
-    backgroundColor: '#cbd5e1',
-    borderRadius: 3,
-  },
   curvedPath: {
     alignSelf: 'center',
   },
   nodeOffset: {
     marginLeft: -40,
-  },
-  spacer: {
-    width: 150,
   },
   unit: {
     width: '100%',
@@ -479,19 +336,4 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.9)',
     borderRadius: 3,
   },
-  treasureWrapper: {
-    padding: 12,
-    borderRadius: 24,
-  },
-  treasureBg: {
-    borderRadius: 20,
-    padding: 8,
-    shadowColor: '#f59e0b',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 8,
-  },
 });
-
-

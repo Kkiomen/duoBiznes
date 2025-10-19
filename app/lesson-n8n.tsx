@@ -18,17 +18,21 @@ import { DuolingoButton } from '@/components/ui/duolingo-button';
 import { LessonHeader } from '@/components/ui/lesson-header';
 import { LessonSuccess } from '@/components/ui/lesson-success';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useLessonData } from '@/hooks/use-lesson-data';
+import { useCourse } from '@/contexts/CourseContext';
 import { useProfile } from '@/hooks/use-profile';
-import { LessonStep } from '@/types/lesson';
+import { LessonStep } from '@/types/course';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 
 export default function LessonN8nScreen() {
   const { moduleId = 'n8n-basics' } = useLocalSearchParams<{ moduleId?: string }>();
-  const { data: lessonModule, loading, error } = useLessonData(moduleId);
+  const { getModuleById, course, loading: courseLoading } = useCourse();
   const { profile, actions } = useProfile();
+
+  const lessonModule = moduleId ? getModuleById(moduleId) : null;
+  const loading = courseLoading;
+  const error = !lessonModule && !courseLoading ? `Nie znaleziono modułu: ${moduleId}` : null;
   const [step, setStep] = useState(0);
   const [selected, setSelected] = useState<any>(null);
   const [textAnswer, setTextAnswer] = useState('');

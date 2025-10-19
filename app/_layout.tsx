@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { CourseProvider } from '@/contexts/CourseContext';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -13,15 +14,17 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="lesson" options={{ headerShown: false, presentation: 'card' }} />
-        <Stack.Screen name="lesson-demo" options={{ headerShown: false, presentation: 'card' }} />
-        <Stack.Screen name="lesson-n8n" options={{ headerShown: false, presentation: 'card' }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <CourseProvider defaultCourseId={1} autoLoad={true}>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="lesson" options={{ headerShown: false, presentation: 'card' }} />
+          <Stack.Screen name="lesson-demo" options={{ headerShown: false, presentation: 'card' }} />
+          <Stack.Screen name="lesson-n8n" options={{ headerShown: false, presentation: 'card' }} />
+          <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+        </Stack>
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    </CourseProvider>
   );
 }
