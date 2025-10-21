@@ -47,9 +47,14 @@ export const API_ENDPOINTS = {
   getCourse: (courseId: number) => `${API_BASE_URL}/api/courses/${courseId}/full`,
 
   /**
+   * Pobiera pojedynczą lekcję/moduł po ID
+   */
+  getLesson: (moduleId: string) => `${API_BASE_URL}/api/lessons/${moduleId}`,
+
+  /**
    * Pobiera profil użytkownika
    */
-  getUserProfile: () => `${API_BASE_URL}/api/user/profile`,
+  getUserProfile: () => `${API_BASE_URL}/api/profile`,
 
   /**
    * Aktualizuje postęp użytkownika
@@ -89,6 +94,30 @@ export const API_ENDPOINTS = {
    * Wylogowanie ze wszystkich urządzeń
    */
   logoutAll: () => `${API_BASE_URL}/api/auth/logout-all`,
+
+  // ========================================
+  // Progress & Learning Endpoints
+  // ========================================
+
+  /**
+   * Zapisanie ukończonej lekcji
+   */
+  saveLessonProgress: () => `${API_BASE_URL}/api/progress/lesson`,
+
+  /**
+   * Dodanie XP (bonusy, eventy)
+   */
+  addXP: () => `${API_BASE_URL}/api/progress/xp`,
+
+  /**
+   * Odblokowanie modułu
+   */
+  unlockModule: () => `${API_BASE_URL}/api/progress/unlock-module`,
+
+  /**
+   * Użycie serca (przy błędzie)
+   */
+  useHeart: () => `${API_BASE_URL}/api/progress/use-heart`,
 };
 
 /**

@@ -98,3 +98,104 @@ export interface UseProfileReturn {
   error: Error | null;
   actions: ProfileActions;
 }
+
+// ========================================
+// API Request/Response Types
+// ========================================
+
+/**
+ * Request payload for POST /api/progress/lesson
+ */
+export interface LessonProgressData {
+  lesson_id: string;
+  module_id: string;
+  score: number;
+  accuracy: number;
+  xp_earned: number;
+  time_spent_minutes: number;
+  mistakes: number;
+  completed_at: string;
+}
+
+/**
+ * Response from POST /api/progress/lesson
+ */
+export interface LessonProgressResponse {
+  success: boolean;
+  message: string;
+  data: {
+    lesson_completed: boolean;
+    xp_added: number;
+    new_level: number;
+    level_up: boolean;
+    new_total_xp: number;
+    unlocked_modules: string[];
+    achievements_unlocked: Achievement[];
+    stats: {
+      hearts: number;
+      streak: number;
+      level: number;
+      xp: number;
+      total_lessons_completed: number;
+    };
+  };
+}
+
+/**
+ * Request payload for POST /api/progress/xp
+ */
+export interface AddXPData {
+  amount: number;
+  reason: string;
+}
+
+/**
+ * Response from POST /api/progress/xp
+ */
+export interface XPResponse {
+  success: boolean;
+  message: string;
+  data: {
+    success: boolean;
+    xp_added: number;
+    new_level: number;
+    level_up: boolean;
+    new_total_xp: number;
+    reason: string;
+  };
+}
+
+/**
+ * Request payload for POST /api/progress/unlock-module
+ */
+export interface UnlockModuleData {
+  module_id: string;
+}
+
+/**
+ * Response from POST /api/progress/unlock-module
+ */
+export interface UnlockModuleResponse {
+  success: boolean;
+  message: string;
+  module_id: string;
+  unlocked_modules: string[];
+}
+
+/**
+ * Request payload for POST /api/progress/use-heart
+ */
+export interface UseHeartData {
+  lesson_id: string;
+}
+
+/**
+ * Response from POST /api/progress/use-heart
+ */
+export interface UseHeartResponse {
+  success: boolean;
+  message: string;
+  hearts: number;
+  max_hearts: number;
+  lesson_id: string;
+}

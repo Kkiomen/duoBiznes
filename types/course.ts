@@ -138,6 +138,7 @@ export interface Module {
   character: string;
   characterName: string;
   totalXP: number;
+  isLocked: boolean; // Dodane pole z API - określa czy moduł jest zablokowany
   lessons: LessonStep[];
 }
 
@@ -147,6 +148,9 @@ export interface Chapter {
   title: string;
   description: string;
   icon: string;
+  order: number;
+  isChapterLocked: boolean; // Dodane pole z API
+  isChapterCompleted: boolean; // Dodane pole z API
   lessons: Module[];
 }
 

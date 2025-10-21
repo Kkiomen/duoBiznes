@@ -6,10 +6,12 @@ import { ErrorScreen } from '@/components/ui/error-screen';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useCourse } from '@/contexts/CourseContext';
+import { useProfile } from '@/hooks/use-profile';
 import { LinearGradient } from 'expo-linear-gradient';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { useState } from 'react';
+import { isModuleUnlocked, isModuleCompleted, getChapterProgress } from '@/utils/module-helpers';
 
 // Mapowanie kolorów dla różnych typów lekcji
 const lessonColors = ['green', 'blue', 'purple', 'yellow', 'pink', 'orange'] as const;
@@ -18,12 +20,13 @@ type LessonColor = typeof lessonColors[number];
 export default function SkillsScreen() {
   const colorScheme = useColorScheme() ?? 'light';
   const { course, loading, error, retry, initialLoadComplete, refresh } = useCourse();
+  const { profile, loading: profileLoading, actions } = useProfile();
   const c = Colors[colorScheme].candy;
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await refresh();
+    await Promise.all([refresh(), actions.refreshProfile()]);
     setRefreshing(false);
   };
 
@@ -41,6 +44,8 @@ export default function SkillsScreen() {
   if (!course) {
     return <LoadingScreen message="Ładowanie..." />;
   }
+
+  // Helper functions for module unlocking logic (teraz używamy z module-helpers.ts)
 
   return (
     <ScrollView
@@ -76,12 +81,16 @@ export default function SkillsScreen() {
               <View style={styles.headerTop}>
                 <View style={styles.statBadge}>
                   <ThemedText style={styles.flame}>🔥</ThemedText>
-                  <ThemedText style={styles.streakText}>0</ThemedText>
+                  <ThemedText style={styles.streakText}>
+                    {profile?.stats.streak ?? 0}
+                  </ThemedText>
                 </View>
                 <View style={{ flex: 1 }} />
                 <View style={styles.statBadge}>
                   <ThemedText style={styles.gem}>💎</ThemedText>
-                  <ThemedText style={styles.gemText}>250</ThemedText>
+                  <ThemedText style={styles.gemText}>
+                    {profile?.stats.xp ?? 0}
+                  </ThemedText>
                 </View>
               </View>
               <ThemedText type="title" style={[styles.title, { color: Colors[colorScheme].text }]}>
@@ -109,7 +118,7 @@ export default function SkillsScreen() {
                     </View>
                     <ThemedText style={styles.unitSubtitle}>{chapter.title}</ThemedText>
                     <View style={styles.progressBar}>
-                      <View style={[styles.progressFill, { width: '0%' }]} />
+                      <View style={[styles.progressFill, { width: `${getChapterProgress(chapter, profile)}%` }]} />
                     </View>
                   </LinearGradient>
                 </View>
@@ -118,6 +127,8 @@ export default function SkillsScreen() {
                 {chapter.lessons.map((lesson, lessonIndex) => {
                   const isLeftAligned = lessonIndex % 2 === 0;
                   const color = lessonColors[lessonIndex % lessonColors.length];
+                  const unlocked = isModuleUnlocked(lesson, lessonIndex, profile);
+                  const completed = isModuleCompleted(lesson.moduleId, profile);
 
                   return (
                     <View key={lesson.id}>
@@ -148,10 +159,11 @@ export default function SkillsScreen() {
                             level={lessonIndex + 1}
                             icon={lesson.character}
                             color={color}
-                            current={lessonIndex === 0}
-                            locked={lessonIndex > 0}
-                            progress={lessonIndex === 0 ? 1 : 0}
-                            href={`/lesson?moduleId=${lesson.moduleId}` as any}
+                            current={!completed && unlocked}
+                            locked={!unlocked}
+                            completed={completed}
+                            progress={completed ? 3 : 0}
+                            href={`/lesson-n8n?moduleId=${lesson.moduleId}` as any}
                           />
                         </View>
                       </View>

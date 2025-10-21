@@ -27,7 +27,7 @@ import { ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, View } from 'r
 
 export default function LessonN8nScreen() {
   const { moduleId = 'n8n-basics' } = useLocalSearchParams<{ moduleId?: string }>();
-  const { getModuleById, course, loading: courseLoading } = useCourse();
+  const { getModuleById, course, loading: courseLoading, refresh } = useCourse();
   const { profile, actions } = useProfile();
 
   const lessonModule = moduleId ? getModuleById(moduleId) : null;
@@ -81,8 +81,14 @@ export default function LessonN8nScreen() {
         timeSpentMinutes: Math.max(1, timeSpentMinutes),
         mistakes,
       });
+
+      // Odśwież dane kursu - backend zmienił is_locked dla kolejnej lekcji
+      console.log('🔄 Odświeżanie danych kursu po ukończeniu...');
+      refresh().catch(err => {
+        console.error('⚠️ Błąd odświeżania kursu:', err);
+      });
     }
-  }, [step, earnedXP, mistakes, moduleId, lessonModule, startTime, actions, loading]);
+  }, [step, earnedXP, mistakes, moduleId, lessonModule, startTime, actions, loading, refresh]);
 
   // Initialize userOrder for drag-sequence - MUST be before any conditional returns
   useEffect(() => {

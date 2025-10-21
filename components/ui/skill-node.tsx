@@ -60,6 +60,11 @@ export function SkillNode({
                 </View>
               </View>
             </LinearGradient>
+
+            {/* Lock message badge */}
+            <View style={styles.lockBadge}>
+              <ThemedText style={styles.lockText}>Ukończ poprzednie</ThemedText>
+            </View>
           </View>
         </View>
         <ThemedText style={[styles.title, styles.lockedTitle]}>
@@ -240,6 +245,22 @@ const styles = StyleSheet.create({
   lockedTitle: {
     opacity: 0.4,
     fontWeight: '600',
+  },
+  lockBadge: {
+    position: 'absolute',
+    bottom: -8,
+    backgroundColor: 'rgba(107,114,128,0.9)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
+  },
+  lockText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#fff',
+    textAlign: 'center',
   },
 });
 

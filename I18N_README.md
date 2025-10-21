@@ -238,3 +238,5 @@ W przypadku problemów:
 - Upewnij się że `LanguageProvider` opakowuje całą aplikację
 - Sprawdź konsolę pod kątem błędów i18n
 
+
+

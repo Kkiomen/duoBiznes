@@ -261,3 +261,5 @@ console.log('Is authenticated:', isAuthenticated);
 - [ ] Personalizacja onboardingu w zależności od typu użytkownika
 - [ ] Analytics - śledzenie ile osób pomija onboarding
 
+
+

@@ -80,8 +80,6 @@ export default function LoginScreen() {
                 style={styles.logo}
                 contentFit="contain"
               />
-              <ThemedText style={styles.title}>{t('auth.login.title')}</ThemedText>
-              <ThemedText style={styles.subtitle}>{t('auth.login.subtitle')}</ThemedText>
             </View>
 
             {/* Login Form */}

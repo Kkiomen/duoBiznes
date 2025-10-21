@@ -1,5 +1,6 @@
 import { ThemedText } from '@/components/themed-text';
 import { useCourse } from '@/contexts/CourseContext';
+import { useProfile } from '@/hooks/use-profile';
 import { LoadingScreen } from '@/components/ui/loading-screen';
 import { ErrorScreen } from '@/components/ui/error-screen';
 import * as Haptics from 'expo-haptics';
@@ -9,6 +10,7 @@ import { useState } from 'react';
 import { Alert, Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring } from 'react-native-reanimated';
 import Svg, { Path } from 'react-native-svg';
+import { isModuleUnlocked, isModuleCompleted } from '@/utils/module-helpers';
 
 type NodeType = 'lesson' | 'practice' | 'story' | 'review' | 'character';
 type NodeState = 'locked' | 'available' | 'current' | 'completed';
@@ -184,6 +186,7 @@ function CharacterNode({ node, onPress, offsetDirection }: {
 export default function NoweScreen() {
   const router = useRouter();
   const { course, loading, error, retry, initialLoadComplete, refresh } = useCourse();
+  const { profile } = useProfile();
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = async () => {
@@ -207,21 +210,42 @@ export default function NoweScreen() {
     return <LoadingScreen message="Ładowanie..." />;
   }
 
-  // Konwersja danych z API na format NodeData - wszystko z API, zero hardcoded!
+  // Konwersja danych z API na format NodeData - używamy logiki z API i profilu!
   const firstChapter = course.chapters[0];
-  const nodes: NodeData[] = firstChapter ? firstChapter.lessons.map((lesson, index) => ({
-    id: lesson.id,
-    type: 'lesson' as NodeType,
-    icon: lesson.character,
-    title: lesson.moduleTitle,
-    state: (index === 0 ? 'current' : index < 4 ? 'available' : 'locked') as NodeState,
-    stars: 0,
-    xp: lesson.totalXP,
-    moduleId: lesson.moduleId, // Bezpośrednio z API!
-  })) : [];
+  const nodes: NodeData[] = firstChapter ? firstChapter.lessons.map((lesson, index) => {
+    // Sprawdź czy moduł jest odblokowany używając helper function
+    const unlocked = isModuleUnlocked(lesson, index, profile);
+    const completed = isModuleCompleted(lesson.moduleId, profile);
 
+    // Określ state na podstawie logiki z API
+    let state: NodeState;
+    if (completed) {
+      state = 'completed';
+    } else if (unlocked) {
+      // Pierwszy odblokowany, nieukończony moduł to "current"
+      const firstAvailable = firstChapter.lessons.findIndex((l, i) =>
+        isModuleUnlocked(l, i, profile) && !isModuleCompleted(l.moduleId, profile)
+      );
+      state = firstAvailable === index ? 'current' : 'available';
+    } else {
+      state = 'locked';
+    }
+
+    return {
+      id: lesson.id,
+      type: 'lesson' as NodeType,
+      icon: lesson.character,
+      title: lesson.moduleTitle,
+      state,
+      stars: completed ? 3 : 0, // Ukończone mają 3 gwiazdki
+      xp: lesson.totalXP,
+      moduleId: lesson.moduleId,
+    };
+  }) : [];
+
+  // Oblicz postęp na podstawie ukończonych lekcji
   const moduleProgress = {
-    completed: 0,
+    completed: nodes.filter(n => n.state === 'completed').length,
     total: nodes.length
   };
 
